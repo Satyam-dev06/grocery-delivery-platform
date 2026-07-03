@@ -1,22 +1,49 @@
 const productContainer = document.getElementById("productContainer");
-products.forEach(function(product){
+const searchInput = document.getElementById("searchInput");
 
-    productContainer.innerHTML += `
+// Function to display products
+function displayProducts(productList) {
 
-    <div class="product-card">
+    productContainer.innerHTML = "";
 
-        <img src="${product.image}" alt="${product.name}">
+    productList.forEach(function(product) {
 
-        <h3>${product.name}</h3>
+        productContainer.innerHTML += `
+            <div class="product-card">
 
-        <p class="price">₹${product.price}</p>
+                <img src="${product.image}" alt="${product.name}">
 
-        <p class="rating">${"⭐".repeat(product.rating)}</p>
+                <h3>${product.name}</h3>
 
-        <button>Add to Cart</button>
+                <p class="price">₹${product.price}</p>
 
-    </div>
+                <p class="rating">${"⭐".repeat(product.rating)}</p>
 
-    `;
+                <button>Add to Cart</button>
+
+            </div>
+        `;
+
+    });
+
+}
+
+// Display all products initially
+displayProducts(products);
+
+// Live Search
+searchInput.addEventListener("input", function () {
+
+    const searchText = searchInput.value.toLowerCase();
+
+    const filteredProducts = products.filter(function(product) {
+
+        return product.name
+            .toLowerCase()
+            .includes(searchText);
+
+    });
+
+    displayProducts(filteredProducts);
 
 });

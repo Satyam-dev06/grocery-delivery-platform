@@ -38,6 +38,19 @@ body {
 .nav-links a:hover {
     color: green;
 }
+.search-box input{
+
+    padding:12px 20px;
+
+    width:260px;
+
+    border-radius:30px;
+
+    border:1px solid #ddd;
+
+    outline:none;
+
+}
 .nav-actions button {
     padding: 10px 20px;
     margin-left: 10px;
@@ -361,6 +374,77 @@ box-shadow:0 15px 30px rgba(0,0,0,.15);
     color:#666;
 
     line-height:1.7;
+
+}
+/* ===========================
+   Categories Section
+=========================== */
+
+.categories{
+
+    padding:80px;
+
+    background:white;
+
+}
+
+.categories h2{
+
+    text-align:center;
+
+    font-size:40px;
+
+    color:#1B4332;
+
+    margin-bottom:50px;
+
+}
+
+.category-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:30px;
+
+}
+
+.category-card{
+
+    background:#F8FFF4;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.category-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 15px 25px rgba(0,0,0,.12);
+
+}
+
+.icon{
+
+    font-size:55px;
+
+}
+
+.category-card h3{
+
+    margin-top:20px;
+
+    color:#333;
 
 }
 footer{
