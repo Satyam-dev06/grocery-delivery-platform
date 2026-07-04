@@ -1,6 +1,6 @@
 const productContainer = document.getElementById("productContainer");
 const searchInput = document.getElementById("searchInput");
-
+let cart = [];
 // Function to display products
 function displayProducts(productList) {
 
@@ -19,7 +19,11 @@ function displayProducts(productList) {
 
                 <p class="rating">${"⭐".repeat(product.rating)}</p>
 
-                <button>Add to Cart</button>
+                <button onclick="addToCart(${product.id})">
+
+            🛒 Add to Cart
+
+            </button>
 
             </div>
         `;
@@ -30,7 +34,26 @@ function displayProducts(productList) {
 
 // Display all products initially
 displayProducts(products);
+function addToCart(id){
 
+    const product = products.find(function(item){
+
+        cart.push({
+
+
+    ...product,
+
+    quantity:1
+
+});
+    console.log(cart);
+    return item.id === id;
+
+});
+
+console.log(product);
+
+}
 // Live Search
 searchInput.addEventListener("input", function () {
 
