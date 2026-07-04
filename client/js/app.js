@@ -1,8 +1,7 @@
 const productContainer = document.getElementById("productContainer");
 const searchInput = document.getElementById("searchInput");
 const cartCount = document.getElementById("cartCount");
-let cart = [];
-// Function to display products
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 function displayProducts(productList) {
 
     productContainer.innerHTML = "";
@@ -37,8 +36,15 @@ function updateCartCount(){
     cartCount.textContent = cart.length;
 
 }
-// Display all products initially
+function saveCart(){
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+}
 displayProducts(products);
+
+updateCartCount();
+
 function addToCart(id){
 
     // Check if product already exists in cart
@@ -75,6 +81,7 @@ function addToCart(id){
     }
 
     console.log(cart);
+    saveCart();
     updateCartCount();
 }
 
