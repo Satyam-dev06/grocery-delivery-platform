@@ -1,5 +1,6 @@
 const productContainer = document.getElementById("productContainer");
 const searchInput = document.getElementById("searchInput");
+const cartCount = document.getElementById("cartCount");
 let cart = [];
 // Function to display products
 function displayProducts(productList) {
@@ -31,29 +32,52 @@ function displayProducts(productList) {
     });
 
 }
+function updateCartCount(){
 
+    cartCount.textContent = cart.length;
+
+}
 // Display all products initially
 displayProducts(products);
 function addToCart(id){
 
-    const product = products.find(function(item){
+    // Check if product already exists in cart
+    const existingProduct = cart.find(function(item){
+
+        return item.id === id;
+
+    });
+
+    // If product exists, increase quantity
+    if(existingProduct){
+
+        existingProduct.quantity++;
+
+    }
+
+    // Otherwise add a new product
+    else{
+
+        const product = products.find(function(item){
+
+            return item.id === id;
+
+        });
 
         cart.push({
 
+            ...product,
 
-    ...product,
+            quantity:1
 
-    quantity:1
+        });
 
-});
+    }
+
     console.log(cart);
-    return item.id === id;
-
-});
-
-console.log(product);
-
+    updateCartCount();
 }
+
 // Live Search
 searchInput.addEventListener("input", function () {
 
