@@ -1,35 +1,128 @@
-const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
 const cartItems = document.getElementById("cartItems");
+const totalPrice = document.getElementById("totalPrice");
 
-let total = 0;
+// Load cart from Local Storage
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-cart.forEach(function(product){
+// Render Cart
+function renderCart() {
 
-    total += product.price * product.quantity;
+    cartItems.innerHTML = "";
 
-    cartItems.innerHTML += `
+    // Empty Cart
+    if (cart.length === 0) {
 
-    <div class="product-card">
+        cartItems.innerHTML = `
+            <h2>Your Cart is Empty 🛒</h2>
+        `;
 
-        <img src="${product.image}">
+        totalPrice.textContent = 0;
 
-        <h3>${product.name}</h3>
+        return;
+    }
 
-        <p>₹${product.price}</p>
+    let total = 0;
 
-        <p>
+    cart.forEach(function(product) {
 
-            Quantity :
+        total += product.price * product.quantity;
 
-            ${product.quantity}
+        cartItems.innerHTML += `
 
-        </p>
+            <div class="product-card">
 
-    </div>
+                <img src="${product.image}" alt="${product.name}">
 
-    `;
+                <h3>${product.name}</h3>
 
-});
+                <p>₹${product.price}</p>
 
-document.getElementById("totalPrice").textContent = total;
+                <div class="quantity-controls">
+
+                    <button onclick="decreaseQuantity(${product.id})">
+                        -
+                    </button>
+
+                    <span>
+                        ${product.quantity}
+                    </span>
+
+                    <button onclick="increaseQuantity(${product.id})">
+                        +
+                    </button>
+
+                </div>
+
+                <button
+                    class="remove-btn"
+                    onclick="removeItem(${product.id})">
+
+                    🗑 Remove
+
+                </button>
+
+            </div>
+
+        `;
+
+    });
+
+    totalPrice.textContent = total;
+
+}
+
+// Increase Quantity
+function increaseQuantity(id) {
+
+    const product = cart.find(function(item) {
+
+        return item.id === id;
+
+    });
+
+    product.quantity++;
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    renderCart();
+
+}
+
+// Decrease Quantity
+function decreaseQuantity(id) {
+
+    const product = cart.find(function(item) {
+
+        return item.id === id;
+
+    });
+
+    if (product.quantity > 1) {
+
+        product.quantity--;
+
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    renderCart();
+
+}
+
+// Remove Item
+function removeItem(id) {
+
+    cart = cart.filter(function(product) {
+
+        return product.id !== id;
+
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    renderCart();
+
+}
+
+// Initial Render
+renderCart();

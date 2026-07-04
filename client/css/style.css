@@ -547,3 +547,59 @@ display:block;
     margin-bottom:20px;
 
 }
+.quantity-controls{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+margin:20px 0;
+
+}
+.quantity-controls button{
+
+width:35px;
+
+height:35px;
+
+border:none;
+
+background:#2E7D32;
+
+color:white;
+
+cursor:pointer;
+
+border-radius:6px;
+
+font-size:18px;
+
+}
+.quantity-controls span{
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+.remove-btn{
+
+margin-top:15px;
+
+background:#E53935;
+
+color:white;
+
+padding:10px 20px;
+
+border:none;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
