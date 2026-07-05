@@ -1,11 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checkout</title>
-  </head>
-  <body>
-    <h1>Checkout</h1>
-  </body>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
+
+<title>Checkout</title>
+
+<link rel="stylesheet"
+href="./css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<nav class="navbar">
+
+<div class="logo">
+
+🛒 GroceryHub
+
+</div>
+
+<button
+onclick="window.location.href='cart.html'">
+
+← Back to Cart
+
+</button>
+
+</nav>
+
+</header>
+
+<main>
+
+<section class="checkout">
+
+<h2>Checkout</h2>
+
+<form id="checkoutForm">
+
+<label>Full Name</label>
+
+<input
+type="text"
+id="name"
+required>
+
+<label>Phone Number</label>
+
+<input
+type="tel"
+id="phone"
+required>
+
+<label>Delivery Address</label>
+
+<textarea
+id="address"
+required></textarea>
+
+<label>Delivery Slot</label>
+
+<select id="slot">
+
+<option>9 AM - 11 AM</option>
+
+<option>11 AM - 1 PM</option>
+
+<option>2 PM - 4 PM</option>
+
+<option>5 PM - 7 PM</option>
+
+</select>
+
+<label>Payment Method</label>
+
+<select id="payment">
+
+<option>Cash on Delivery</option>
+
+<option>UPI</option>
+
+<option>Debit Card</option>
+
+<option>Credit Card</option>
+
+</select>
+
+<button
+class="shop-btn"
+type="submit">
+
+Place Order
+
+</button>
+
+</form>
+
+</section>
+
+</main>
+
+<script src="./js/checkout.js"></script>
+
+</body>
+
 </html>

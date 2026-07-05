@@ -603,3 +603,69 @@ border-radius:6px;
 cursor:pointer;
 
 }
+.checkout{
+
+padding:80px;
+
+max-width:700px;
+
+margin:auto;
+
+}
+
+.checkout h2{
+
+text-align:center;
+
+margin-bottom:40px;
+
+color:#1B4332;
+
+}
+
+.checkout form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:20px;
+
+}
+
+.checkout input,
+.checkout textarea,
+.checkout select{
+
+padding:15px;
+
+font-size:16px;
+
+border:1px solid #ddd;
+
+border-radius:8px;
+
+}
+
+.checkout textarea{
+
+height:120px;
+
+resize:none;
+
+}
+.orders-page{
+
+padding:80px;
+
+}
+
+.orders-page h2{
+
+text-align:center;
+
+margin-bottom:40px;
+
+color:#1B4332;
+
+}
