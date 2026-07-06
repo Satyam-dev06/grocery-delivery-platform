@@ -669,3 +669,24 @@ margin-bottom:40px;
 color:#1B4332;
 
 }
+.sort-container{
+
+display:flex;
+
+justify-content:flex-end;
+
+align-items:center;
+
+gap:15px;
+
+padding:0 80px 20px;
+
+}
+
+.sort-container select{
+
+padding:10px;
+
+border-radius:6px;
+
+}

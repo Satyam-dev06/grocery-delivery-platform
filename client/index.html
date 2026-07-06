@@ -85,27 +85,53 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <h2>Shop By Category</h2>
 
-    <div class="category-container">
+    <div
+class="category-card"
 
-        <div class="category-card">
-            <div class="icon">🥬</div>
-            <h3>Vegetables</h3>
-        </div>
+onclick="displayProducts(products)">
 
-        <div class="category-card">
-            <div class="icon">🍎</div>
-            <h3>Fruits</h3>
-        </div>
+    <div class="icon">🛍️</div>
 
-        <div class="category-card">
-            <div class="icon">🥛</div>
-            <h3>Dairy</h3>
-        </div>
+    <h3>All Products</h3>
 
-        <div class="category-card">
-            <div class="icon">🍞</div>
-            <h3>Bakery</h3>
-        </div>
+</div>
+onclick="filterCategory('Vegetables')">
+
+    <div class="icon">🥬</div>
+
+    <h3>Vegetables</h3>
+
+</div>
+
+                    <div
+            class="category-card"
+            onclick="filterCategory('Fruits')">
+
+                <div class="icon">🍎</div>
+
+                <h3>Fruits</h3>
+
+            </div>
+
+      <div
+class="category-card"
+onclick="filterCategory('Dairy')">
+
+    <div class="icon">🥛</div>
+
+    <h3>Dairy</h3>
+
+</div>
+
+        <div
+class="category-card"
+onclick="filterCategory('Bakery')">
+
+    <div class="icon">🍞</div>
+
+    <h3>Bakery</h3>
+
+</div>
 
         <div class="category-card">
             <div class="icon">🥤</div>
@@ -128,6 +154,22 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </div>
 
     </div>
+
+    <div class="sort-container">
+
+    <label>Sort By:</label>
+
+    <select id="sortProducts">
+
+        <option value="default">Default</option>
+
+        <option value="low">Price: Low to High</option>
+
+        <option value="high">Price: High to Low</option>
+
+    </select>
+
+</div>
 
 </section>
 <section class="featured-products">
