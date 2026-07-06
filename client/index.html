@@ -22,11 +22,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <li><a href="#">Home</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="#">Offers</a></li>
-            <li>
-                <a href="orders.html">
-                    Orders
-                </a>
-            </li>        </ul>
+           <li>
+
+<a href="#categories">
+
+Categories
+
+</a>
+
+</li>       </ul>
         <div class="search-box">
 
             <input
@@ -35,19 +39,26 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 placeholder="Search groceries..."
             >
 
-        </div>
-        <div class="nav-actions">
-          <button
-    class="cart-btn"
-    onclick="window.location.href='cart.html'">
+      <div class="nav-actions">
 
-    🛒 Cart
+    <div class="points-box">
+        ⭐ <span id="loyaltyPoints">0</span> Points
+    </div>
 
-    <span id="cartCount">0</span>
+    <button
+        class="cart-btn"
+        onclick="window.location.href='cart.html'">
 
-</button>
-            <button class="login-btn">Login</button>
-        </div>
+        🛒 Cart
+        <span id="cartCount">0</span>
+
+    </button>
+
+    <button class="login-btn">
+        Login
+    </button>
+
+</div>
     </nav>
 </header>
 <main>
@@ -69,8 +80,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="hero-buttons">
 
-            <button class="shop-btn">Shop Now</button>
+<button
+class="shop-btn"
+onclick="document.querySelector('.featured-products').scrollIntoView({behavior:'smooth'})">
 
+Shop Now
+
+</button>
             <button class="category-btn">Explore Categories</button>
 
         </div>
@@ -81,57 +97,36 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <img src="./images/grocery.png" alt="Groceries">
     </div>
     </section>
-    <section class="categories">
+   <section class="categories">
 
     <h2>Shop By Category</h2>
 
-    <div
-class="category-card"
+    <div class="category-container">
 
-onclick="displayProducts(products)">
+        <div class="category-card" onclick="displayProducts(products)">
+            <div class="icon">🛍️</div>
+            <h3>All Products</h3>
+        </div>
 
-    <div class="icon">🛍️</div>
+        <div class="category-card" onclick="filterCategory('Vegetables')">
+            <div class="icon">🥬</div>
+            <h3>Vegetables</h3>
+        </div>
 
-    <h3>All Products</h3>
+        <div class="category-card" onclick="filterCategory('Fruits')">
+            <div class="icon">🍎</div>
+            <h3>Fruits</h3>
+        </div>
 
-</div>
-onclick="filterCategory('Vegetables')">
+        <div class="category-card" onclick="filterCategory('Dairy')">
+            <div class="icon">🥛</div>
+            <h3>Dairy</h3>
+        </div>
 
-    <div class="icon">🥬</div>
-
-    <h3>Vegetables</h3>
-
-</div>
-
-                    <div
-            class="category-card"
-            onclick="filterCategory('Fruits')">
-
-                <div class="icon">🍎</div>
-
-                <h3>Fruits</h3>
-
-            </div>
-
-      <div
-class="category-card"
-onclick="filterCategory('Dairy')">
-
-    <div class="icon">🥛</div>
-
-    <h3>Dairy</h3>
-
-</div>
-
-        <div
-class="category-card"
-onclick="filterCategory('Bakery')">
-
-    <div class="icon">🍞</div>
-
-    <h3>Bakery</h3>
-
-</div>
+        <div class="category-card" onclick="filterCategory('Bakery')">
+            <div class="icon">🍞</div>
+            <h3>Bakery</h3>
+        </div>
 
         <div class="category-card">
             <div class="icon">🥤</div>
@@ -155,9 +150,11 @@ onclick="filterCategory('Bakery')">
 
     </div>
 
-    <div class="sort-container">
+</section>
 
-    <label>Sort By:</label>
+<div class="sort-container">
+
+    <label for="sortProducts">Sort By:</label>
 
     <select id="sortProducts">
 
@@ -171,7 +168,6 @@ onclick="filterCategory('Bakery')">
 
 </div>
 
-</section>
 <section class="featured-products">
 
     <h2>Featured Products</h2>
@@ -323,3 +319,4 @@ onclick="filterCategory('Bakery')">
 <script src="./js/app.js"></script>
 </body>
 </html>
+

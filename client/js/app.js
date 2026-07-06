@@ -12,11 +12,35 @@ function displayProducts(productList) {
         productContainer.innerHTML += `
             <div class="product-card">
 
+                <span class="offer-badge">
+
+                🔥 ${product.offer}
+
+                </span>
+
+                <button
+                class="wishlist-btn"
+                onclick="addWishlist(${product.id})">
+
+                ❤️
+
+                </button>
+
                 <img src="${product.image}" alt="${product.name}">
 
                 <h3>${product.name}</h3>
 
                 <p class="price">₹${product.price}</p>
+
+               <p class="stock">
+
+                ${product.stock > 5
+
+                ? "✅ In Stock"
+
+                : "⚠ Only " + product.stock + " Left"}
+
+                </p>
 
                 <p class="rating">${"⭐".repeat(product.rating)}</p>
 
@@ -32,6 +56,8 @@ function displayProducts(productList) {
     });
 
 }
+
+
 function updateCartCount(){
 
     cartCount.textContent = cart.length;
@@ -84,6 +110,34 @@ function addToCart(id){
     console.log(cart);
     saveCart();
     updateCartCount();
+}
+
+function addWishlist(id){
+
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+    const exists = wishlist.find(function(item){
+
+        return item === id;
+
+    });
+
+    if(!exists){
+
+        wishlist.push(id);
+
+    }
+
+    localStorage.setItem(
+
+        "wishlist",
+
+        JSON.stringify(wishlist)
+
+    );
+
+    alert("Added to Wishlist ❤️");
+
 }
 
 function filterCategory(category){
