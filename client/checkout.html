@@ -80,6 +80,32 @@ required></textarea>
 
 </select>
 
+<label>
+
+Coupon Code
+
+</label>
+
+<input
+
+type="text"
+
+id="coupon"
+
+placeholder="SAVE20">
+
+<button
+
+type="button"
+
+id="applyCoupon">
+
+Apply Coupon
+
+</button>
+
+<p id="couponMessage"></p>
+
 <label>Payment Method</label>
 
 <select id="payment">
@@ -103,6 +129,32 @@ Place Order
 </button>
 
 </form>
+
+<div class="order-summary">
+
+    <h3>Order Summary</h3>
+
+    <p>
+        Products Total :
+        ₹<span id="summaryTotal">0</span>
+    </p>
+
+    <p>
+        Delivery :
+        ₹<span id="deliveryFee">25</span>
+    </p>
+
+    <p>
+        Discount :
+        ₹<span id="discountAmount">0</span>
+    </p>
+
+    <h2>
+        Grand Total :
+        ₹<span id="grandTotal">0</span>
+    </h2>
+
+</div>
 
 </section>
 

@@ -197,3 +197,45 @@ sortProducts.addEventListener("change", function(){
 
 });
 
+const recommendedContainer =
+document.getElementById("recommendedContainer");
+
+displayRecommendations();
+
+function displayRecommendations(){
+
+    if(!recommendedContainer) return;
+
+    recommendedContainer.innerHTML="";
+
+    const recommended = products.slice(0,3);
+
+    recommended.forEach(function(product){
+
+        recommendedContainer.innerHTML += `
+
+        <div class="product-card">
+
+            <img src="${product.image}">
+
+            <h3>${product.name}</h3>
+
+            <p class="price">
+                ₹${product.price}
+            </p>
+
+            <button
+            onclick="addToCart(${product.id})">
+
+                Add To Cart
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
