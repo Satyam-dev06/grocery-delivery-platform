@@ -30,76 +30,139 @@ body{
 }
 .navbar{
 
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:20px 60px;
-
-    background:var(--white);
-
     position:sticky;
 
     top:0;
 
     z-index:1000;
 
-    box-shadow:var(--shadow);
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 70px;
+
+    background:white;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
 
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: green;
-}
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
+.logo{
 
-.nav-links a {
-    text-decoration: none;
-    color: black;
-    font-weight: 500;
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:#138808;
+
 }
 
-.nav-links a:hover {
-    color: green;
-}
-.search-box input{
+.search-box{
 
-    padding:12px 20px;
+    display:flex;
 
-    width:260px;
+    align-items:center;
 
-    border-radius:30px;
+    background:white;
 
     border:1px solid #ddd;
 
+    border-radius:40px;
+
+    padding:0 18px;
+
+}
+
+.search-box i{
+
+    color:#888;
+
+    margin-right:10px;
+
+}
+
+.search-box input{
+
+    border:none;
+
     outline:none;
 
-}
-.nav-actions button {
-    padding: 10px 20px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    width:260px;
+
+    padding:14px 0;
+
+    font-size:15px;
+
 }
 
-.cart-btn {
-    background: #4CAF50;
-    color: white;
+.nav-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
 }
 
-.login-btn {
-    background: #333;
-    color: white;
+.points-box{
+
+    background:#FFD54F;
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
 }
+
+.cart-btn{
+
+    background:#2E7D32;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.login-btn{
+
+    background:#333;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.cart-btn:hover,
+.login-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
 .hero{
     display:flex;
     justify-content:space-between;
@@ -144,28 +207,26 @@ body{
     margin-top:35px;
 
 }
-.shop-btn{
+.shop-btn,
+.category-btn{
 
-    background:var(--primary);
+    padding:16px 36px;
 
-    color:white;
+    border-radius:50px;
 
-    border:none;
+    font-size:17px;
 
-    padding:15px 35px;
-
-    border-radius:8px;
-
-    cursor:pointer;
+    font-weight:bold;
 
     transition:.3s;
 
 }
-.shop-btn:hover{
 
-    background:var(--primary-dark);
+.shop-btn{
 
-    transform:translateY(-4px);
+    background:#2E7D32;
+
+    color:white;
 
 }
 
@@ -173,25 +234,17 @@ body{
 
     background:white;
 
-    color:var(--primary);
+    color:#2E7D32;
 
-    border:2px solid var(--primary);
-
-    padding:15px 35px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    transition:.3s;
+    border:2px solid #2E7D32;
 
 }
 
-.category-btn:hover{
+.shop-btn:hover{
 
-    background:var(--primary);
+    transform:translateY(-5px);
 
-    color:white;
+    box-shadow:0 10px 25px rgba(46,125,50,.35);
 
 }
 
@@ -200,8 +253,6 @@ body{
     background:#2E7D32;
 
     color:white;
-
-    transition:0.3s;
 
 }
 .hero-image img{
@@ -880,4 +931,96 @@ font-weight:bold;
 
 color:#2E7D32;
 
+}
+
+.hero-image{
+
+    position:relative;
+
+}
+
+.floating-card{
+
+    position:absolute;
+
+    background:white;
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+    font-weight:bold;
+
+    animation:float 3s ease-in-out infinite;
+
+}
+
+.card1{
+
+    top:20px;
+
+    left:-20px;
+
+}
+
+.card2{
+
+    top:180px;
+
+    right:-20px;
+
+}
+
+.card3{
+
+    bottom:40px;
+
+    left:20px;
+
+}
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-10px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.nav-links{
+    display:flex;
+    list-style:none;
+    gap:35px;
+    align-items:center;
+}
+
+.nav-links li{
+    list-style:none;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#222;
+    font-weight:600;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#2E7D32;
 }

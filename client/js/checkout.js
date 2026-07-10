@@ -1,19 +1,9 @@
-// ===============================
-// Elements
-// ===============================
-
 const form = document.getElementById("checkoutForm");
 const applyCoupon = document.getElementById("applyCoupon");
 
-// ===============================
-// Variables
-// ===============================
 
 let discount = 0;
 
-// ===============================
-// Update Order Summary
-// ===============================
 
 function updateSummary() {
 
@@ -47,12 +37,9 @@ function updateSummary() {
 
 }
 
-// Initial Summary
+
 updateSummary();
 
-// ===============================
-// Coupon
-// ===============================
 
 applyCoupon.addEventListener("click", function () {
 
@@ -80,9 +67,6 @@ applyCoupon.addEventListener("click", function () {
 
 });
 
-// ===============================
-// Express Delivery Change
-// ===============================
 
 document.getElementById("express").addEventListener(
 
@@ -92,9 +76,6 @@ document.getElementById("express").addEventListener(
 
 );
 
-// ===============================
-// Place Order
-// ===============================
 
 form.addEventListener("submit", function (event) {
 
@@ -176,10 +157,7 @@ form.addEventListener("submit", function (event) {
 
     );
 
-    // ===============================
-    // Loyalty Points
-    // ===============================
-
+    
     const currentPoints =
         Number(localStorage.getItem("points")) || 0;
 

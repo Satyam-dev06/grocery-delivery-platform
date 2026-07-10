@@ -22,40 +22,46 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <li><a href="#">Home</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="#">Offers</a></li>
-           <li>
+            <li><a href="orders.html">Orders</a></li>
+    </ul>
+       <div class="search-box">
 
-<a href="#categories">
+    <i class="fa-solid fa-magnifying-glass"></i>
 
-Categories
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search groceries..."
+    >
 
-</a>
+</div>
 
-</li>       </ul>
-        <div class="search-box">
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search groceries..."
-            >
-
-      <div class="nav-actions">
+<div class="nav-actions">
 
     <div class="points-box">
-        ⭐ <span id="loyaltyPoints">0</span> Points
+
+        ⭐ <span id="userPoints">0</span> Points
+
     </div>
 
     <button
         class="cart-btn"
         onclick="window.location.href='cart.html'">
 
-        🛒 Cart
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        Cart
+
         <span id="cartCount">0</span>
 
     </button>
 
     <button class="login-btn">
+
+        <i class="fa-solid fa-user"></i>
+
         Login
+
     </button>
 
 </div>
@@ -95,6 +101,23 @@ Shop Now
 
     <div class="hero-image">
         <img src="./images/grocery.png" alt="Groceries">
+        <div class="floating-card card1">
+
+    🚚 Free Delivery
+
+</div>
+
+<div class="floating-card card2">
+
+    ⭐ 50K+ Customers
+
+</div>
+
+<div class="floating-card card3">
+
+    🥬 Fresh Everyday
+
+</div>
     </div>
     </section>
    <section class="categories">
