@@ -2,67 +2,98 @@ const productContainer = document.getElementById("productContainer");
 const searchInput = document.getElementById("searchInput");
 const cartCount = document.getElementById("cartCount");
 const sortSelect = document.getElementById("sortProducts");
+const recommendedContainer = document.getElementById("recommendedContainer");
+const scrollButton = document.getElementById("scrollTop");
+
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+
+function showToast(message) {
+
+    const toast = document.getElementById("toast");
+
+    if (!toast) return;
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(function () {
+
+        toast.classList.remove("show");
+
+    }, 2000);
+
+}
+
+
 function displayProducts(productList) {
+
+    if (!productContainer) return;
 
     productContainer.innerHTML = "";
 
-    productList.forEach(function(product) {
+    productList.forEach(function (product) {
 
         productContainer.innerHTML += `
-           <div class="product-card">
 
-            <div class="wishlist">
-            ❤️
+        <div class="product-card">
+
+            <div
+                class="wishlist"
+                onclick="addWishlist(${product.id})">
+
+                ❤️
+
             </div>
 
             <div class="discount-badge">
 
-            ${Math.round(
-            ((product.oldPrice-product.price)
-            /product.oldPrice)*100
-            )}% OFF
+                ${Math.round(
+                    ((product.oldPrice - product.price) /
+                        product.oldPrice) * 100
+                )}% OFF
 
             </div>
 
-            <img src="${product.image}">
+            <img src="${product.image}" alt="${product.name}">
 
             <h3>${product.name}</h3>
 
             <p class="old-price">
 
-            ₹${product.oldPrice}
+                ₹${product.oldPrice}
 
             </p>
 
             <p class="price">
 
-            ₹${product.price}
+                ₹${product.price}
 
             </p>
 
             <p class="stock">
 
-            ${product.stock ?
-            "✅ In Stock"
-            :
-            "⚠ Only 5 Left"}
+                ${product.stock
+                    ? "✅ In Stock"
+                    : "⚠ Only 5 Left"}
 
             </p>
 
             <p class="rating">
 
-            ${"⭐".repeat(product.rating)}
+                ${"⭐".repeat(product.rating)}
 
             </p>
 
             <button onclick="addToCart(${product.id})">
 
-            🛒 Add To Cart
+                🛒 Add To Cart
 
             </button>
 
-            </div>
+        </div>
+
         `;
 
     });
@@ -70,40 +101,39 @@ function displayProducts(productList) {
 }
 
 
-function updateCartCount(){
+function updateCartCount() {
 
-    cartCount.textContent = cart.length;
+    if (cartCount) {
+
+        cartCount.textContent = cart.length;
+
+    }
 
 }
-function saveCart(){
+
+function saveCart() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
 }
-displayProducts(products);
 
-updateCartCount();
+function addToCart(id) {
 
-function addToCart(id){
-
-    // Check if product already exists in cart
-    const existingProduct = cart.find(function(item){
+    const existingProduct = cart.find(function (item) {
 
         return item.id === id;
 
     });
 
-    // If product exists, increase quantity
-    if(existingProduct){
+    if (existingProduct) {
 
         existingProduct.quantity++;
 
     }
 
-    // Otherwise add a new product
-    else{
+    else {
 
-        const product = products.find(function(item){
+        const product = products.find(function (item) {
 
             return item.id === id;
 
@@ -113,48 +143,66 @@ function addToCart(id){
 
             ...product,
 
-            quantity:1
+            quantity: 1
 
         });
 
     }
 
-    console.log(cart);
     saveCart();
+
     updateCartCount();
+
+    const product = products.find(function (item) {
+
+        return item.id === id;
+
+    });
+
+    showToast(product.name + " added to cart 🛒");
+
 }
 
-function addWishlist(id){
 
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+function addWishlist(id) {
 
-    const exists = wishlist.find(function(item){
+    let wishlist =
+        JSON.parse(localStorage.getItem("wishlist")) || [];
+
+    const exists = wishlist.find(function (item) {
 
         return item === id;
 
     });
 
-    if(!exists){
+    if (!exists) {
 
         wishlist.push(id);
 
+        localStorage.setItem(
+
+            "wishlist",
+
+            JSON.stringify(wishlist)
+
+        );
+
+        showToast("Added to Wishlist ❤️");
+
     }
 
-    localStorage.setItem(
+    else {
 
-        "wishlist",
+        showToast("Already in Wishlist ❤️");
 
-        JSON.stringify(wishlist)
-
-    );
-
-    alert("Added to Wishlist ❤️");
+    }
 
 }
 
-function filterCategory(category){
 
-    const filteredProducts = products.filter(function(product){
+function filterCategory(category) {
+
+    const filteredProducts = products.filter(function (product) {
 
         return product.category === category;
 
@@ -164,80 +212,88 @@ function filterCategory(category){
 
 }
 
-// Live Search
-searchInput.addEventListener("input", function () {
 
-    const searchText = searchInput.value.toLowerCase();
+if (searchInput) {
 
-    const filteredProducts = products.filter(function(product) {
+    searchInput.addEventListener("input", function () {
 
-        return product.name
-            .toLowerCase()
-            .includes(searchText);
+        const searchText =
+            searchInput.value.toLowerCase();
+
+        const filteredProducts = products.filter(function (product) {
+
+            return product.name
+                .toLowerCase()
+                .includes(searchText);
+
+        });
+
+        displayProducts(filteredProducts);
 
     });
 
-    displayProducts(filteredProducts);
+}
 
-});
 
-sortProducts.addEventListener("change", function(){
+if (sortSelect) {
 
-    const sortedProducts = [...products];
+    sortSelect.addEventListener("change", function () {
 
-    if(sortProducts.value==="low"){
+        const sortedProducts = [...products];
 
-        sortedProducts.sort(function(a,b){
+        if (sortSelect.value === "low") {
 
-            return a.price-b.price;
+            sortedProducts.sort(function (a, b) {
 
-        });
+                return a.price - b.price;
 
-    }
+            });
 
-    else if(sortProducts.value==="high"){
+        }
 
-        sortedProducts.sort(function(a,b){
+        else if (sortSelect.value === "high") {
 
-            return b.price-a.price;
+            sortedProducts.sort(function (a, b) {
 
-        });
+                return b.price - a.price;
 
-    }
+            });
 
-    displayProducts(sortedProducts);
+        }
 
-});
+        displayProducts(sortedProducts);
 
-const recommendedContainer =
-document.getElementById("recommendedContainer");
+    });
 
-displayRecommendations();
+}
 
-function displayRecommendations(){
 
-    if(!recommendedContainer) return;
+function displayRecommendations() {
 
-    recommendedContainer.innerHTML="";
+    if (!recommendedContainer) return;
 
-    const recommended = products.slice(0,3);
+    recommendedContainer.innerHTML = "";
 
-    recommended.forEach(function(product){
+    const recommended = products.slice(0, 3);
+
+    recommended.forEach(function (product) {
 
         recommendedContainer.innerHTML += `
 
         <div class="product-card">
 
-            <img src="${product.image}">
+            <img src="${product.image}" alt="${product.name}">
 
             <h3>${product.name}</h3>
 
             <p class="price">
+
                 ₹${product.price}
+
             </p>
 
             <button
-            onclick="addToCart(${product.id})">
+                onclick="addToCart(${product.id})">
 
                 Add To Cart
 
@@ -251,3 +307,41 @@ function displayRecommendations(){
 
 }
 
+
+if (scrollButton) {
+
+    window.addEventListener("scroll", function () {
+
+        if (window.scrollY > 500) {
+
+            scrollButton.style.display = "block";
+
+        }
+
+        else {
+
+            scrollButton.style.display = "none";
+
+        }
+
+    });
+
+    scrollButton.addEventListener("click", function () {
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    });
+
+}
+
+displayProducts(products);
+
+displayRecommendations();
+
+updateCartCount();
