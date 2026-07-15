@@ -43,9 +43,9 @@ function displayProducts(productList) {
                 class="wishlist"
                 onclick="addWishlist(${product.id})">
 
-                ❤️
+                ${wishlist.includes(product.id) ? "❤️" : "🤍"}
 
-            </div>
+                </div>
 
             <div class="discount-badge">
 
