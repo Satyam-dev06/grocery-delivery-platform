@@ -1354,3 +1354,251 @@ margin:10px 0;
 
 }
 
+/* ==========================
+   Testimonials
+========================== */
+
+.testimonials{
+
+    padding:90px 80px;
+
+    background:#F8FFF4;
+
+}
+
+.testimonials h2{
+
+    text-align:center;
+
+    font-size:40px;
+
+    color:#1B4332;
+
+    margin-bottom:60px;
+
+}
+
+.testimonial-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:30px;
+
+}
+
+.testimonial-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    text-align:center;
+
+    transition:.35s;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.testimonial-card:hover{
+
+    transform:translateY(-12px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+
+.testimonial-card img{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:50%;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+}
+
+.testimonial-card h3{
+
+    margin-bottom:10px;
+
+    color:#1B4332;
+
+}
+
+.stars{
+
+    color:#FFD700;
+
+    font-size:20px;
+
+    margin-bottom:15px;
+
+}
+
+.testimonial-card p{
+
+    color:#666;
+
+    line-height:1.7;
+
+}
+
+/* ==========================
+   Newsletter
+========================== */
+
+.newsletter{
+
+    padding:90px 80px;
+
+    background:linear-gradient(135deg,#2E7D32,#4CAF50);
+
+    color:white;
+
+    text-align:center;
+
+}
+
+.newsletter h2{
+
+    font-size:42px;
+
+    margin-bottom:20px;
+
+}
+
+.newsletter p{
+
+    font-size:18px;
+
+    max-width:700px;
+
+    margin:auto;
+
+    line-height:1.8;
+
+}
+
+.newsletter-form{
+
+    margin-top:40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+
+}
+
+.newsletter-form input{
+
+    width:420px;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:50px;
+
+    outline:none;
+
+    font-size:16px;
+
+}
+
+.newsletter-form button{
+
+    padding:18px 35px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:white;
+
+    color:#2E7D32;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.newsletter-form button:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 10px 25px rgba(255,255,255,.25);
+
+}
+
+/* ==========================
+   Statistics Section
+========================== */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:30px;
+
+    padding:70px 80px;
+
+    background:white;
+
+}
+
+.stat-card{
+
+    text-align:center;
+
+    padding:35px;
+
+    border-radius:18px;
+
+    background:#F8FFF4;
+
+    transition:.3s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 15px 30px rgba(0,0,0,.1);
+
+}
+
+.stat-card h2{
+
+    font-size:48px;
+
+    color:#2E7D32;
+
+    margin-bottom:10px;
+
+}
+
+.stat-card p{
+
+    color:#666;
+
+    font-size:18px;
+
+}
+

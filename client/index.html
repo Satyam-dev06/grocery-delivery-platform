@@ -85,13 +85,8 @@
 
         <div class="hero-buttons">
 
-<button
-class="shop-btn"
-onclick="document.querySelector('.featured-products').scrollIntoView({behavior:'smooth'})">
-
-Shop Now
-
-</button>
+            <button class="shop-btn"onclick="document.querySelector('.featured-products').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+            
             <button class="category-btn">Explore Categories</button>
 
         </div>
@@ -119,6 +114,42 @@ Shop Now
 </div>
     </div>
     </section>
+
+    <section class="stats">
+
+    <div class="stat-card">
+
+        <h2 class="counter" data-target="10000">0</h2>
+
+        <p>Happy Customers</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h2 class="counter" data-target="500">0</h2>
+
+        <p>Products</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h2 class="counter" data-target="50">0</h2>
+
+        <p>Local Stores</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h2 class="counter" data-target="30">0</h2>
+
+        <p>Minute Delivery</p>
+
+    </div>
+
+</section>
 
     <section class="offers" id="offers">
 
@@ -326,6 +357,96 @@ Shop Now
     </div>
 
 </section>
+
+<section class="testimonials">
+
+    <h2>What Our Customers Say</h2>
+
+    <div class="testimonial-container">
+
+        <div class="testimonial-card">
+
+            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Rahul Sharma">
+
+            <h3>Rahul Sharma</h3>
+
+            <p class="stars">★★★★★</p>
+
+            <p>
+
+                Fresh vegetables and super fast delivery.
+                GroceryHub has become my first choice.
+
+            </p>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <img src="https://randomuser.me/api/portraits/women/37.jpg" alt="Priya Singh">
+            <h3>Priya Singh</h3>
+
+            <p class="stars">★★★★★</p>
+
+            <p>
+
+                Amazing discounts and excellent customer
+                service. Highly recommended.
+
+            </p>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <img src="https://i.pravatar.cc/120?img=35" alt="Customer">
+
+            <h3>Sharon Verma</h3>
+
+            <p class="stars">★★★★★</p>
+
+            <p>
+
+                The delivery was on time and every product
+                was fresh. Loved the experience.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="newsletter">
+
+    <div class="newsletter-content">
+
+        <h2>Stay Updated with GroceryHub</h2>
+
+        <p>
+            Subscribe to receive exclusive offers,
+            discounts, and fresh grocery updates every week.
+        </p>
+
+        <div class="newsletter-form">
+
+            <input
+                type="email"
+                placeholder="Enter your email">
+
+            <button>
+
+                Subscribe
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
 <footer>
 
     <div class="footer-container">
@@ -404,6 +525,7 @@ Shop Now
 </main>
 <script src="./js/products.js"></script>
 <script src="./js/app.js"></script>
+<script src="./js/newsletter.js"></script>
+<script src="./js/counter.js"></script>
 </body>
 </html>
-
