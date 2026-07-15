@@ -329,21 +329,29 @@ box-shadow:0 8px 25px rgba(46,125,50,.25);
     gap:30px;
 
 }
-.product-card{
+.product-card button{
 
-    position:relative;
+width:100%;
 
-    background:var(--white);
+padding:15px;
 
-    border-radius:15px;
+background:#2E7D32;
 
-    padding:20px;
+color:white;
 
-    text-align:center;
+border:none;
 
-    box-shadow:var(--shadow);
+border-radius:12px;
 
-    transition:.3s;
+cursor:pointer;
+
+font-size:16px;
+
+font-weight:bold;
+
+transition:.3s;
+
+margin-top:15px;
 
 }
 .product-card:hover{
@@ -355,11 +363,15 @@ box-shadow:0 8px 25px rgba(46,125,50,.25);
 }
 .product-card img{
 
-    width:140px;
+width:170px;
 
-    height:140px;
+height:170px;
 
-    object-fit:contain;
+object-fit:contain;
+
+margin:auto;
+
+transition:.4s;
 
 }
 .product-card h3{
@@ -400,17 +412,87 @@ box-shadow:0 8px 25px rgba(46,125,50,.25);
 }
 .product-card button:hover{
 
-    background:#1B5E20;
+background:#1B5E20;
+
+transform:translateY(-2px);
 
 }
 
 .product-card:hover{
 
-transform:translateY(-10px);
+transform:translateY(-12px);
 
-box-shadow:0 15px 30px rgba(0,0,0,.15);
+box-shadow:0 20px 40px rgba(0,0,0,.15);
 
 }
+
+.product-card:hover img{
+
+transform:scale(1.08);
+
+}
+
+.discount-badge{
+
+position:absolute;
+
+top:15px;
+
+left:15px;
+
+background:#FF4D4D;
+
+color:white;
+
+padding:6px 12px;
+
+border-radius:20px;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+
+.wishlist{
+
+position:absolute;
+
+top:15px;
+
+right:15px;
+
+width:40px;
+
+height:40px;
+
+background:white;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+cursor:pointer;
+
+font-size:20px;
+
+box-shadow:0 5px 12px rgba(0,0,0,.15);
+
+transition:.3s;
+
+}
+
+.wishlist:hover{
+
+transform:scale(1.2);
+
+}
+
+
 .why-us{
 
     padding:80px;
@@ -1241,16 +1323,15 @@ color:#2E7D32;
 
 .old-price{
 
-    color:#999;
+text-decoration:line-through;
 
-    text-decoration:line-through;
+color:#999;
 
-    margin-left:10px;
+margin-top:10px;
 
-    font-size:16px;
+font-size:15px;
 
 }
-
 .stock{
 
     margin:15px 0;
@@ -1258,6 +1339,18 @@ color:#2E7D32;
     font-weight:bold;
 
     color:#2E7D32;
+
+}
+
+.price{
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#2E7D32;
+
+margin:10px 0;
 
 }
 

@@ -10,43 +10,55 @@ function displayProducts(productList) {
     productList.forEach(function(product) {
 
         productContainer.innerHTML += `
-            <div class="product-card">
+           <div class="product-card">
 
-                <span class="offer-badge">
+            <div class="wishlist">
+            ❤️
+            </div>
 
-                🔥 ${product.offer}
+            <div class="discount-badge">
 
-                </span>
+            ${Math.round(
+            ((product.oldPrice-product.price)
+            /product.oldPrice)*100
+            )}% OFF
 
-                <button
-                class="wishlist-btn"
-                onclick="addWishlist(${product.id})">
+            </div>
 
-                ❤️
+            <img src="${product.image}">
 
-                </button>
+            <h3>${product.name}</h3>
 
-                <img src="${product.image}" alt="${product.name}">
+            <p class="old-price">
 
-                <h3>${product.name}</h3>
+            ₹${product.oldPrice}
 
-                <p class="price">₹${product.price}</p>
+            </p>
 
-               <p class="stock">
+            <p class="price">
 
-                ${product.stock > 5
+            ₹${product.price}
 
-                ? "✅ In Stock"
+            </p>
 
-                : "⚠ Only " + product.stock + " Left"}
+            <p class="stock">
 
-                </p>
+            ${product.stock ?
+            "✅ In Stock"
+            :
+            "⚠ Only 5 Left"}
 
-                <p class="rating">${"⭐".repeat(product.rating)}</p>
+            </p>
 
-                <button onclick="addToCart(${product.id})">
+            <p class="rating">
 
-            🛒 Add to Cart
+            ${"⭐".repeat(product.rating)}
+
+            </p>
+
+            <button onclick="addToCart(${product.id})">
+
+            🛒 Add To Cart
 
             </button>
 
