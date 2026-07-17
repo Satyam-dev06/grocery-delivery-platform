@@ -6,7 +6,7 @@ const recommendedContainer = document.getElementById("recommendedContainer");
 const scrollButton = document.getElementById("scrollTop");
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
 function showToast(message) {
 
@@ -165,9 +165,6 @@ function addToCart(id) {
 
 
 function addWishlist(id) {
-
-    let wishlist =
-        JSON.parse(localStorage.getItem("wishlist")) || [];
 
     const exists = wishlist.find(function (item) {
 
@@ -345,3 +342,55 @@ displayProducts(products);
 displayRecommendations();
 
 updateCartCount();
+
+// =========================
+// Trending Products
+// =========================
+
+const trendingContainer =
+document.getElementById("trendingContainer");
+
+displayTrendingProducts();
+
+function displayTrendingProducts(){
+
+    if(!trendingContainer) return;
+
+    trendingContainer.innerHTML = "";
+
+    const trending = [...products]
+    .sort(function(a,b){
+
+        return b.rating-a.rating;
+
+    })
+    .slice(0,4);
+
+    trending.forEach(function(product){
+
+        trendingContainer.innerHTML += `
+
+        <div class="product-card">
+
+            <img src="${product.image}" alt="${product.name}">
+
+            <h3>${product.name}</h3>
+
+            <p class="price">
+                ₹${product.price}
+            </p>
+
+            <button onclick="addToCart(${product.id})">
+
+                Add To Cart
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+

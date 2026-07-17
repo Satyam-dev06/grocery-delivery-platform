@@ -597,40 +597,45 @@ transform:scale(1.2);
 
 .category-card{
 
-    background:var(--secondary);
+    background:#f7fff4;
+    border-radius:18px;
+    height:180px;
 
-    padding:30px;
-
-    border-radius:15px;
-
-    text-align:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
     cursor:pointer;
 
-    transition:.3s;
+    transition:0.3s;
 
-    box-shadow:var(--shadow);
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
 
 }
+
 .category-card:hover{
 
-    transform:translateY(-10px);
+    transform:translateY(-8px);
 
-    box-shadow:var(--shadow-hover);
-
-}
-
-.icon{
-
-    font-size:55px;
+    background:#2e7d32;
 
 }
 
 .category-card h3{
 
-    margin-top:20px;
+    font-size:26px;
 
-    color:#333;
+    font-weight:700;
+
+    color:#214d36;
+
+    transition:0.3s;
+
+}
+
+.category-card:hover h3{
+
+    color:white;
 
 }
 footer{
