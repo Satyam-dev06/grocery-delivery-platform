@@ -1,197 +1,93 @@
 const form = document.getElementById("checkoutForm");
 const applyCoupon = document.getElementById("applyCoupon");
 
-
 let discount = 0;
 
-
 function updateSummary() {
-
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    let productTotal = 0;
-
-    cart.forEach(function(product) {
-
-        productTotal += product.price * product.quantity;
-
-    });
-
-    let delivery = 25;
-
-    const expressEl = document.getElementById("express");
-
-    if (expressEl && expressEl.checked) {
-
-        delivery = 49;
-
-    }
-
-    const grandTotal = productTotal + delivery - discount;
-
-    document.getElementById("summaryTotal").textContent = productTotal;
-
-    document.getElementById("deliveryFee").textContent = delivery;
-
-    document.getElementById("discountAmount").textContent = discount;
-
-    document.getElementById("grandTotal").textContent = grandTotal;
-
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let productTotal = 0;
+  cart.forEach(function (p) { productTotal += p.price * p.quantity; });
+  let delivery = 25;
+  const expressEl = document.getElementById("express");
+  if (expressEl && expressEl.checked) delivery = 49;
+  const grandTotal = productTotal + delivery - discount;
+  const el = function (id) { return document.getElementById(id); };
+  if (el("summaryTotal")) el("summaryTotal").textContent = productTotal;
+  if (el("deliveryFee")) el("deliveryFee").textContent = delivery;
+  if (el("discountAmount")) el("discountAmount").textContent = discount;
+  if (el("grandTotal")) el("grandTotal").textContent = grandTotal;
 }
 
-
-updateSummary();
-
+// Fetch API cart for logged-in users, then update summary
+(async function loadCheckoutCart() {
+  if (isLoggedIn()) {
+    try {
+      const data = await fetchCart();
+      if (data && data.items) {
+        localStorage.setItem("cart", JSON.stringify(data.items));
+      }
+    } catch (e) { /* fallback to localStorage */ }
+  }
+  updateSummary();
+})();
 
 if (applyCoupon) {
-
-applyCoupon.addEventListener("click", function () {
-
+  applyCoupon.addEventListener("click", function () {
     const coupon = document.getElementById("coupon").value.trim();
-
     if (coupon === "SAVE20") {
-
-        discount = 20;
-
-        document.getElementById("couponMessage").textContent =
-            "Coupon Applied ✅";
-
+      discount = 20;
+      document.getElementById("couponMessage").textContent = "Coupon Applied";
+    } else {
+      discount = 0;
+      document.getElementById("couponMessage").textContent = "Invalid Coupon";
     }
-
-    else {
-
-        discount = 0;
-
-        document.getElementById("couponMessage").textContent =
-            "Invalid Coupon ❌";
-
-    }
-
     updateSummary();
-
-});
-
+  });
 }
 
-// Safely attach express delivery listener
 const expressEl = document.getElementById("express");
+if (expressEl) expressEl.addEventListener("change", updateSummary);
 
-if (expressEl) {
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    window.location.href = "index.html";
+    return;
+  }
 
-    expressEl.addEventListener(
+  if (!isLoggedIn()) {
+    alert("Please login to place an order");
+    window.location.href = "login.html";
+    return;
+  }
 
-        "change",
+  let productTotal = 0;
+  cart.forEach(function (p) { productTotal += p.price * p.quantity; });
+  const expressEl = document.getElementById("express");
+  const express = expressEl ? expressEl.checked : false;
+  const delivery = express ? 49 : 25;
+  const grandTotal = productTotal + delivery - discount;
 
-        updateSummary
+  const orderData = {
+    customerName: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value,
+    slot: document.getElementById("slot").value,
+    payment: document.getElementById("payment").value,
+    express: express,
+    discount: discount,
+  };
 
-    );
-
-}
-
-
-form.addEventListener("submit", function (event) {
-
-    event.preventDefault();
-
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    if (cart.length === 0) {
-
-        alert("Your cart is empty!");
-
-        window.location.href = "index.html";
-
-        return;
-
-    }
-
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    // Calculate totals
-
-    let productTotal = 0;
-
-    cart.forEach(function(product){
-
-        productTotal += product.price * product.quantity;
-
-    });
-
-    let delivery = 25;
-
-    const expressEl = document.getElementById("express");
-
-    const express = expressEl ? expressEl.checked : false;
-
-    if(express){
-
-        delivery = 49;
-
-    }
-
-    const grandTotal = productTotal + delivery - discount;
-
-    // Create Order
-
-    const order = {
-
-        customerName: document.getElementById("name").value,
-
-        phone: document.getElementById("phone").value,
-
-        address: document.getElementById("address").value,
-
-        slot: document.getElementById("slot").value,
-
-        payment: document.getElementById("payment").value,
-
-        express: express,
-
-        items: cart,
-
-        discount: discount,
-
-        deliveryFee: delivery,
-
-        total: grandTotal,
-
-        orderDate: new Date().toLocaleString()
-
-    };
-
-    // Save Order
-
-    orders.push(order);
-
-    localStorage.setItem(
-
-        "orders",
-
-        JSON.stringify(orders)
-
-    );
-
-    
-    const currentPoints =
-        Number(localStorage.getItem("points")) || 0;
-
-    const earnedPoints =
-        Math.floor(productTotal / 10);
-
-    localStorage.setItem(
-
-        "points",
-
-        currentPoints + earnedPoints
-
-    );
-
-    // Clear Cart
-
+  try {
+    await createOrder(orderData);
+    const points = Math.floor(productTotal / 10);
+    const currentPoints = Number(localStorage.getItem("points")) || 0;
+    localStorage.setItem("points", currentPoints + points);
     localStorage.removeItem("cart");
-
-    // Redirect
-
     window.location.href = "order-success.html";
-
+  } catch (error) {
+    alert("Order failed: " + error.message);
+  }
 });

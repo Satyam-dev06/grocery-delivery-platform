@@ -1,138 +1,121 @@
 const cartItems = document.getElementById("cartItems");
 const totalPrice = document.getElementById("totalPrice");
 
-// Load cart from Local Storage
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
 
-// Update cart count badge across all pages
-function updateCartBadge() {
-    const badge = document.getElementById("cartCount");
-    if (badge) {
-        badge.textContent = cart.length;
-    }
+// Local toast (no dependency on app.js)
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  if (toast) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(function () { toast.classList.remove("show"); }, 2000);
+  } else {
+    alert(message);
+  }
 }
 
-// Render Cart
+// Render cart items
 function renderCart() {
-
-    cartItems.innerHTML = "";
-
-    // Empty Cart
-    if (cart.length === 0) {
-
-        cartItems.innerHTML = `
-            <h2>Your Cart is Empty 🛒</h2>
-        `;
-
-        totalPrice.textContent = 0;
-
-        return;
-    }
-
-    let total = 0;
-
-    cart.forEach(function(product) {
-
-        total += product.price * product.quantity;
-
-        cartItems.innerHTML += `
-
-            <div class="product-card">
-
-                <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
-
-                <h3>${product.name}</h3>
-
-                <p>₹${product.price}</p>
-
-                <div class="quantity-controls">
-
-                    <button onclick="decreaseQuantity(${product.id})">
-                        -
-                    </button>
-
-                    <span>
-                        ${product.quantity}
-                    </span>
-
-                    <button onclick="increaseQuantity(${product.id})">
-                        +
-                    </button>
-
-                </div>
-
-                <button
-                    class="remove-btn"
-                    onclick="removeItem(${product.id})">
-
-                    🗑 Remove
-
-                </button>
-
-            </div>
-
-        `;
-
-    });
-
-    totalPrice.textContent = total;
-
+  if (!cartItems) return;
+  cartItems.innerHTML = "";
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<h2>Your Cart is Empty</h2>';
+    if (totalPrice) totalPrice.textContent = "0";
     updateCartBadge();
-
+    return;
+  }
+  let total = 0;
+  cart.forEach(function (product) {
+    total += product.price * product.quantity;
+    const id = product._id || product.product || product.id;
+    cartItems.innerHTML += `
+      <div class="product-card">
+        <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
+        <h3>${product.name}</h3>
+        <p>₹${product.price}</p>
+        <div class="quantity-controls">
+          <button onclick="decreaseQuantity('${id}')">-</button>
+          <span>${product.quantity}</span>
+          <button onclick="increaseQuantity('${id}')">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeItem('${id}')">Remove</button>
+      </div>`;
+  });
+  if (totalPrice) totalPrice.textContent = total;
+  updateCartBadge();
 }
 
-// Increase Quantity
-function increaseQuantity(id) {
-
-    const product = cart.find(function(item) {
-
-        return item.id === id;
-
-    });
-
-    product.quantity++;
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    renderCart();
-
+function updateCartBadge() {
+  const badge = document.getElementById("cartCount");
+  if (badge) badge.textContent = cart.length;
 }
 
-// Decrease Quantity
-function decreaseQuantity(id) {
-
-    const product = cart.find(function(item) {
-
-        return item.id === id;
-
-    });
-
-    if (product.quantity > 1) {
-
-        product.quantity--;
-
+async function increaseQuantity(id) {
+  if (isLoggedIn()) {
+    try {
+      const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+      if (item) {
+        const updated = await updateCartItemAPI(id, item.quantity + 1);
+        cart = updated.items || [];
+        renderCart();
+      }
+    } catch (e) { showToast("Error: " + e.message); }
+  } else {
+    const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+    if (item) {
+      item.quantity++;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
     }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    renderCart();
-
+  }
 }
 
-// Remove Item
-function removeItem(id) {
-
-    cart = cart.filter(function(product) {
-
-        return product.id !== id;
-
-    });
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    renderCart();
-
+async function decreaseQuantity(id) {
+  if (isLoggedIn()) {
+    try {
+      const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+      if (item && item.quantity > 1) {
+        const updated = await updateCartItemAPI(id, item.quantity - 1);
+        cart = updated.items || [];
+        renderCart();
+      }
+    } catch (e) { showToast("Error: " + e.message); }
+  } else {
+    const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+    if (item && item.quantity > 1) {
+      item.quantity--;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+  }
 }
 
-// Initial Render
-renderCart();
+async function removeItem(id) {
+  if (isLoggedIn()) {
+    try {
+      const updated = await removeFromCartAPI(id);
+      cart = updated.items || [];
+      renderCart();
+    } catch (e) { showToast("Error: " + e.message); }
+  } else {
+    cart = cart.filter(function (p) { return (p._id || p.product || p.id) !== id; });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+  }
+}
+
+// Load cart
+(async function loadCart() {
+  if (isLoggedIn()) {
+    try {
+      const data = await fetchCart();
+      cart = data.items || [];
+      // Sync API cart to localStorage for checkout page compatibility
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch (e) { cart = []; }
+  } else {
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
+  }
+  renderCart();
+})();

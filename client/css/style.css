@@ -889,9 +889,7 @@ resize:none;
 
     background:#C62828;
 
-}
-
-.orders-page{
+}.orders-page{
 
 padding:80px;
 
@@ -899,11 +897,154 @@ padding:80px;
 
 .orders-page h2{
 
-text-align:center;
+    text-align:center;
 
-margin-bottom:40px;
+    margin-bottom:40px;
 
-color:#1B4332;
+    color:#1B4332;
+
+}
+
+.order-card {
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.order-card:hover {
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+
+.order-card h3 {
+    color:#1B4332;
+    margin-bottom:15px;
+}
+
+.order-card p {
+    margin:8px 0;
+    color:#555;
+    line-height:1.6;
+}
+
+/* ==========================
+   Auth Pages
+=========================== */
+
+.auth-page {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:70vh;
+    padding:60px 20px;
+}
+
+.auth-card {
+    background:white;
+    border-radius:20px;
+    padding:40px;
+    width:100%;
+    max-width:450px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+.auth-card h2 {
+    text-align:center;
+    color:#1B4332;
+    margin-bottom:30px;
+}
+
+.auth-tabs {
+    display:flex;
+    gap:0;
+    margin-bottom:30px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid #2E7D32;
+}
+
+.auth-tab {
+    flex:1;
+    padding:14px;
+    border:none;
+    background:white;
+    color:#2E7D32;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.auth-tab.active {
+    background:#2E7D32;
+    color:white;
+}
+
+.auth-card form {
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.auth-card input,
+.auth-card textarea {
+    padding:14px;
+    font-size:15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+    transition:.3s;
+}
+
+.auth-card input:focus,
+.auth-card textarea:focus {
+    border-color:#2E7D32;
+    box-shadow:0 0 0 3px rgba(46,125,50,.15);
+}
+
+.auth-card textarea {
+    height:80px;
+    resize:none;
+}
+
+.auth-card .shop-btn {
+    width:100%;
+    padding:16px;
+}
+
+#loginMessage,
+#regMessage {
+    text-align:center;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+/* ==========================
+   Sort Container
+=========================== */
+
+.sort-container{
+
+display:flex;
+
+justify-content:flex-end;
+
+align-items:center;
+
+gap:15px;
+
+padding:0 80px 20px;
+
+}
+
+.sort-container select{
+
+padding:10px;
+
+border-radius:6px;
 
 }
 .sort-container{

@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -16,6 +17,9 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, "..", "client")));
 
 // API Routes
 app.use("/api/products", productRoutes);

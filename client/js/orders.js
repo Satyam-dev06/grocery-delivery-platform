@@ -1,61 +1,41 @@
 const ordersContainer = document.getElementById("ordersContainer");
 
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
+(async function loadOrders() {
+  let orders = [];
 
-if(orders.length===0){
+  if (isLoggedIn()) {
+    try {
+      orders = await fetchOrders();
+    } catch (e) {
+      orders = JSON.parse(localStorage.getItem("orders")) || [];
+    }
+  } else {
+    orders = JSON.parse(localStorage.getItem("orders")) || [];
+  }
 
-    ordersContainer.innerHTML=`
+  if (orders.length === 0) {
+    ordersContainer.innerHTML = '<h2>No Orders Yet</h2>';
+    return;
+  }
 
-        <h2>No Orders Yet 📦</h2>
-
-    `;
-
-}
-
-else{
-
-    orders.forEach(function(order){
-
-        let total = 0;
-
-        order.items.forEach(function(product){
-
-            total += product.price * product.quantity;
-
-        });
-
-        ordersContainer.innerHTML += `
-
-        <div class="product-card">
-
-            <h3>${order.customerName}</h3>
-
-            <p><strong>Phone:</strong> ${order.phone}</p>
-
-            <p><strong>Address:</strong> ${order.address}</p>
-
-            <p><strong>Delivery:</strong> ${order.slot}</p>
-
-            <p><strong>Payment:</strong> ${order.payment}</p>
-
-            <p><strong>Date:</strong> ${order.orderDate}</p>
-
-                <p>
-
-                <strong>Items:</strong>
-
-                ${order.items.map(function(product){
-
-                return `${product.name} × ${product.quantity}`;
-
-                }).join(", ")}
-
-                </p>
-        </div>
-
-        `;
-
-    });
-
-}
-
+  orders.forEach(function (order) {
+    let itemsHtml = "";
+    if (order.items) {
+      itemsHtml = order.items.map(function (item) {
+        return (item.name || "Item") + " x " + item.quantity;
+      }).join(", ");
+    }
+    ordersContainer.innerHTML += `
+      <div class="order-card">
+        <h3>${order.customerName || "Order"}</h3>
+        <p><strong>Status:</strong> ${order.status || "Delivered"}</p>
+        <p><strong>Phone:</strong> ${order.phone}</p>
+        <p><strong>Address:</strong> ${order.address}</p>
+        <p><strong>Delivery:</strong> ${order.slot}</p>
+        <p><strong>Payment:</strong> ${order.payment}</p>
+        <p><strong>Total:</strong> Rs.${order.total}</p>
+        <p><strong>Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString() : order.orderDate}</p>
+        <p><strong>Items:</strong> ${itemsHtml}</p>
+      </div>`;
+  });
+})();
