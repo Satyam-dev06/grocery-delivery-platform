@@ -56,7 +56,7 @@ function displayProducts(productList) {
 
             </div>
 
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
 
             <h3>${product.name}</h3>
 
@@ -279,7 +279,7 @@ function displayRecommendations() {
 
         <div class="product-card">
 
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
 
             <h3>${product.name}</h3>
 
@@ -372,7 +372,7 @@ function displayTrendingProducts(){
 
         <div class="product-card">
 
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
 
             <h3>${product.name}</h3>
 

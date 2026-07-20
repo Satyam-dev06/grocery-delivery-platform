@@ -1,31 +1,31 @@
 const wishlistContainer =
 document.getElementById("wishlistContainer");
 
-const wishlist =
+let wishlistIds =
 JSON.parse(localStorage.getItem("wishlist")) || [];
 
-const wishlistProducts =
-products.filter(function(product){
+function renderWishlist() {
 
-    return wishlist.includes(product.id);
+    wishlistContainer.innerHTML = "";
 
-});
+    const wishlistProducts =
+    products.filter(function(product){
 
-if(wishlistProducts.length===0){
+        return wishlistIds.includes(product.id);
 
-    wishlistContainer.innerHTML = `
+    });
 
-    <h2>
+    if(wishlistIds.length === 0 || wishlistProducts.length === 0){
 
-    Your Wishlist is Empty ❤️
+        wishlistContainer.innerHTML = `
 
-    </h2>
+        <h2>Your Wishlist is Empty ❤️</h2>
 
-    `;
+        `;
 
-}
+        return;
 
-else{
+    }
 
     wishlistProducts.forEach(function(product){
 
@@ -33,7 +33,7 @@ else{
 
         <div class="product-card">
 
-            <img src="${product.image}">
+            <img src="${product.image}" onerror="this.style.display='none'">
 
             <h3>${product.name}</h3>
 
@@ -46,7 +46,15 @@ else{
             <button
             onclick="window.location.href='cart.html'">
 
-                Go To Cart
+                🛒 Go To Cart
+
+            </button>
+
+            <button
+            class="remove-wishlist-btn"
+            onclick="removeFromWishlist(${product.id})">
+
+                ❌ Remove
 
             </button>
 
@@ -57,3 +65,22 @@ else{
     });
 
 }
+
+function removeFromWishlist(id) {
+
+    wishlistIds = wishlistIds.filter(function(item) {
+
+        return item !== id;
+
+    });
+
+    localStorage.setItem(
+        "wishlist",
+        JSON.stringify(wishlistIds)
+    );
+
+    renderWishlist();
+
+}
+
+renderWishlist();

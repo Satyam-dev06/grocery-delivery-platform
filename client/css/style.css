@@ -845,6 +845,52 @@ height:120px;
 resize:none;
 
 }
+.express-label {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    color:#1B4332;
+
+    cursor:pointer;
+
+    margin:10px 0;
+
+}
+
+.express-label input[type="checkbox"] {
+
+    width:20px;
+
+    height:20px;
+
+    accent-color:#2E7D32;
+
+    cursor:pointer;
+
+}
+
+.product-card button.remove-wishlist-btn {
+
+    background:#E53935;
+
+    margin-top:5px;
+
+}
+
+.product-card button.remove-wishlist-btn:hover {
+
+    background:#C62828;
+
+}
+
 .orders-page{
 
 padding:80px;

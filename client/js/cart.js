@@ -4,6 +4,14 @@ const totalPrice = document.getElementById("totalPrice");
 // Load cart from Local Storage
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+// Update cart count badge across all pages
+function updateCartBadge() {
+    const badge = document.getElementById("cartCount");
+    if (badge) {
+        badge.textContent = cart.length;
+    }
+}
+
 // Render Cart
 function renderCart() {
 
@@ -31,7 +39,7 @@ function renderCart() {
 
             <div class="product-card">
 
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
 
                 <h3>${product.name}</h3>
 
@@ -68,6 +76,8 @@ function renderCart() {
     });
 
     totalPrice.textContent = total;
+
+    updateCartBadge();
 
 }
 

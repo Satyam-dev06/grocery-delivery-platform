@@ -19,7 +19,9 @@ function updateSummary() {
 
     let delivery = 25;
 
-    if (document.getElementById("express").checked) {
+    const expressEl = document.getElementById("express");
+
+    if (expressEl && expressEl.checked) {
 
         delivery = 49;
 
@@ -40,6 +42,8 @@ function updateSummary() {
 
 updateSummary();
 
+
+if (applyCoupon) {
 
 applyCoupon.addEventListener("click", function () {
 
@@ -67,14 +71,22 @@ applyCoupon.addEventListener("click", function () {
 
 });
 
+}
 
-document.getElementById("express").addEventListener(
+// Safely attach express delivery listener
+const expressEl = document.getElementById("express");
 
-    "change",
+if (expressEl) {
 
-    updateSummary
+    expressEl.addEventListener(
 
-);
+        "change",
+
+        updateSummary
+
+    );
+
+}
 
 
 form.addEventListener("submit", function (event) {
@@ -107,7 +119,9 @@ form.addEventListener("submit", function (event) {
 
     let delivery = 25;
 
-    const express = document.getElementById("express").checked;
+    const expressEl = document.getElementById("express");
+
+    const express = expressEl ? expressEl.checked : false;
 
     if(express){
 

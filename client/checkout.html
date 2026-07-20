@@ -46,27 +46,30 @@ onclick="window.location.href='cart.html'">
 
 <form id="checkoutForm">
 
-<label>Full Name</label>
+<label for="name">Full Name</label>
 
 <input
 type="text"
 id="name"
+autocomplete="name"
 required>
 
-<label>Phone Number</label>
+<label for="phone">Phone Number</label>
 
 <input
 type="tel"
 id="phone"
+autocomplete="tel"
 required>
 
-<label>Delivery Address</label>
+<label for="address">Delivery Address</label>
 
 <textarea
 id="address"
+autocomplete="street-address"
 required></textarea>
 
-<label>Delivery Slot</label>
+<label for="slot">Delivery Slot</label>
 
 <select id="slot">
 
@@ -80,7 +83,15 @@ required></textarea>
 
 </select>
 
-<label>
+<label class="express-label">
+
+<input type="checkbox" id="express">
+
+🚀 Express Delivery (₹49) — Delivered within 1 Hour
+
+</label>
+
+<label for="coupon">
 
 Coupon Code
 
@@ -92,7 +103,9 @@ type="text"
 
 id="coupon"
 
-placeholder="SAVE20">
+placeholder="SAVE20"
+
+autocomplete="off">
 
 <button
 
@@ -106,7 +119,7 @@ Apply Coupon
 
 <p id="couponMessage"></p>
 
-<label>Payment Method</label>
+<label for="payment">Payment Method</label>
 
 <select id="payment">
 
