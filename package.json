@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "GroceryHub - Full-stack grocery delivery platform",
   "scripts": {
-    "install": "cd server && npm install",
+    "setup": "cd server && npm install",
     "seed": "cd server && npm run seed",
     "start": "cd server && npm start",
     "dev": "cd server && npm run dev"
