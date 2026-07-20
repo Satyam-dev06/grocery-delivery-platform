@@ -1,12 +1,11 @@
 {
   "name": "grocery-delivery",
   "version": "1.0.0",
-  "description": "A simple grocery delivery app",
-  "main": "server/app.js",
+  "description": "GroceryHub - Full-stack grocery delivery platform",
   "scripts": {
-    "start": "node server/app.js"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
+    "install": "cd server && npm install",
+    "seed": "cd server && npm run seed",
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev"
   }
 }
