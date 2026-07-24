@@ -158,15 +158,40 @@ async function clearCartAPI() {
 }
 
 // ─── Orders ───
-async function createOrder(orderData) {
+
+/**
+ * Place a new order from the user's cart.
+ * Sends addressId and paymentMethod — the backend reads
+ * items from the cart, copies prices, and clears the cart.
+ */
+async function placeOrderAPI(addressId, paymentMethod) {
   return await apiRequest("/orders", {
     method: "POST",
-    body: JSON.stringify(orderData),
+    body: JSON.stringify({ addressId, paymentMethod }),
   });
 }
 
+/**
+ * Get logged-in user's orders (summary list).
+ */
 async function fetchOrders() {
   return await apiRequest("/orders");
+}
+
+/**
+ * Get a single order by ID with full details.
+ */
+async function fetchOrderById(orderId) {
+  return await apiRequest("/orders/" + orderId);
+}
+
+/**
+ * Cancel an order (only if Pending or Confirmed).
+ */
+async function cancelOrderAPI(orderId) {
+  return await apiRequest("/orders/cancel/" + orderId, {
+    method: "PUT",
+  });
 }
 
 // ─── Wishlist ───
@@ -194,5 +219,44 @@ async function removeFromWishlistAPI(productId) {
 async function clearWishlistAPI() {
   return await apiRequest("/wishlist", {
     method: "DELETE",
+  });
+}
+
+// ─── Address ───
+async function addAddress(addressData) {
+  return await apiRequest("/address", {
+    method: "POST",
+    body: JSON.stringify(addressData),
+  });
+}
+
+async function fetchAddresses() {
+  try {
+    return await apiRequest("/address");
+  } catch (e) {
+    return [];
+  }
+}
+
+async function fetchAddressById(id) {
+  return await apiRequest("/address/" + id);
+}
+
+async function updateAddress(id, addressData) {
+  return await apiRequest("/address/" + id, {
+    method: "PUT",
+    body: JSON.stringify(addressData),
+  });
+}
+
+async function deleteAddress(id) {
+  return await apiRequest("/address/" + id, {
+    method: "DELETE",
+  });
+}
+
+async function setDefaultAddress(id) {
+  return await apiRequest("/address/default/" + id, {
+    method: "PUT",
   });
 }

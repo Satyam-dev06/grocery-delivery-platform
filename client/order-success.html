@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1">
-
-<title>Order Successful</title>
-
-<link rel="stylesheet"
-href="./css/style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Successful - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
-
 <body>
 
-<section class="checkout">
+<header>
+  <nav class="navbar">
+    <div class="logo">🛒 GroceryHub</div>
+    <button onclick="window.location.href='index.html'">🏠 Home</button>
+  </nav>
+</header>
 
-<h1>🎉 Order Placed Successfully!</h1>
+<main>
+  <section class="checkout" style="text-align:center;">
+    <div style="font-size:80px;margin-bottom:20px;">🎉</div>
+    <h1 style="color:#2E7D32;margin-bottom:20px;">Order Placed Successfully!</h1>
+    <p style="font-size:18px;color:#555;margin-bottom:10px;">
+      Thank you for shopping with GroceryHub.
+    </p>
+    <p style="font-size:16px;color:#888;margin-bottom:40px;">
+      Your order has been placed and is being processed.
+    </p>
 
-<p>
-
-Thank you for shopping with GroceryHub.
-
-</p>
-
-<button
-class="shop-btn"
-onclick="window.location.href='index.html'">
-
-Continue Shopping
-
-</button>
-
-</section>
+    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+      <button class="shop-btn" onclick="window.location.href='orders.html'" style="padding:16px 36px;">
+        📦 View My Orders
+      </button>
+      <button class="category-btn" onclick="window.location.href='index.html'" style="padding:16px 36px;">
+        🏠 Continue Shopping
+      </button>
+    </div>
+  </section>
+</main>
 
 </body>
-
 </html>

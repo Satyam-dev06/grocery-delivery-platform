@@ -1,181 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1">
-
-<title>Checkout</title>
-
-<link rel="stylesheet"
-href="./css/style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
-
 <body>
 
 <header>
-
-<nav class="navbar">
-
-<div class="logo">
-
-🛒 GroceryHub
-
-</div>
-
-<button
-onclick="window.location.href='cart.html'">
-
-← Back to Cart
-
-</button>
-
-</nav>
-
+  <nav class="navbar">
+    <div class="logo">🛒 GroceryHub</div>
+    <button onclick="window.location.href='cart.html'">← Back to Cart</button>
+  </nav>
 </header>
 
 <main>
+  <section class="checkout">
+    <h2>📋 Checkout</h2>
 
-<section class="checkout">
+    <form id="checkoutForm">
 
-<h2>Checkout</h2>
+      <!-- Saved Addresses -->
+      <div id="savedAddressesSection">
+        <label>📍 Select Delivery Address</label>
+        <div id="savedAddressList">
+          <p style="color:#999;padding:20px;">Loading addresses...</p>
+        </div>
+        <p><a href="address.html" style="color:#2E7D32;font-weight:bold;">+ Add / Manage Addresses</a></p>
+      </div>
 
-<form id="checkoutForm">
+      <hr style="margin:15px 0;border-color:#eee;">
 
-<label for="name">Full Name</label>
+      <!-- Payment Method -->
+      <label for="payment">💳 Payment Method</label>
+      <select id="payment" required>
+        <option value="Cash on Delivery">Cash on Delivery</option>
+        <option value="UPI">UPI</option>
+        <option value="Card">Card</option>
+      </select>
 
-<input
-type="text"
-id="name"
-autocomplete="name"
-required>
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        <p>Products Total: ₹<span id="summaryTotal">0</span></p>
+        <h2 style="margin-top:15px;">Grand Total: ₹<span id="grandTotal">0</span></h2>
+      </div>
 
-<label for="phone">Phone Number</label>
+      <!-- Message Area -->
+      <p id="checkoutMessage" style="text-align:center;font-weight:bold;min-height:24px;"></p>
 
-<input
-type="tel"
-id="phone"
-autocomplete="tel"
-required>
+      <!-- Submit Button with Loading Spinner -->
+      <button class="shop-btn" type="submit" id="placeOrderBtn" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span id="btnText">Place Order</span>
+        <span id="btnSpinner" style="display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span>
+      </button>
 
-<label for="address">Delivery Address</label>
-
-<textarea
-id="address"
-autocomplete="street-address"
-required></textarea>
-
-<label for="slot">Delivery Slot</label>
-
-<select id="slot">
-
-<option>9 AM - 11 AM</option>
-
-<option>11 AM - 1 PM</option>
-
-<option>2 PM - 4 PM</option>
-
-<option>5 PM - 7 PM</option>
-
-</select>
-
-<label class="express-label">
-
-<input type="checkbox" id="express">
-
-🚀 Express Delivery (₹49) — Delivered within 1 Hour
-
-</label>
-
-<label for="coupon">
-
-Coupon Code
-
-</label>
-
-<input
-
-type="text"
-
-id="coupon"
-
-placeholder="SAVE20"
-
-autocomplete="off">
-
-<button
-
-type="button"
-
-id="applyCoupon">
-
-Apply Coupon
-
-</button>
-
-<p id="couponMessage"></p>
-
-<label for="payment">Payment Method</label>
-
-<select id="payment">
-
-<option>Cash on Delivery</option>
-
-<option>UPI</option>
-
-<option>Debit Card</option>
-
-<option>Credit Card</option>
-
-</select>
-
-<button
-class="shop-btn"
-type="submit">
-
-Place Order
-
-</button>
-
-</form>
-
-<div class="order-summary">
-
-    <h3>Order Summary</h3>
-
-    <p>
-        Products Total :
-        ₹<span id="summaryTotal">0</span>
-    </p>
-
-    <p>
-        Delivery :
-        ₹<span id="deliveryFee">25</span>
-    </p>
-
-    <p>
-        Discount :
-        ₹<span id="discountAmount">0</span>
-    </p>
-
-    <h2>
-        Grand Total :
-        ₹<span id="grandTotal">0</span>
-    </h2>
-
-</div>
-
-</section>
-
+    </form>
+  </section>
 </main>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
 <script src="./js/api.js"></script>
 <script src="./js/checkout.js"></script>
 
 </body>
-
 </html>

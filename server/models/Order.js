@@ -1,73 +1,102 @@
 const mongoose = require("mongoose");
 
-const orderItemSchema = new mongoose.Schema({
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-    required: true,
+// ─── Order Item Sub-Schema ───
+// Stores a snapshot of product details at time of purchase
+const orderItemSchema = new mongoose.Schema(
+  {
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    priceAtPurchase: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    image: {
+      type: String,
+      default: "",
+    },
   },
-  name: String,
-  price: Number,
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1,
-  },
-  image: String,
-});
+  { _id: false }
+);
 
+// ─── Delivery Address Sub-Schema ───
+const deliveryAddressSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    addressLine1: { type: String, required: true },
+    addressLine2: { type: String, default: "" },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    pincode: { type: String, required: true },
+    landmark: { type: String, default: "" },
+    addressType: { type: String, default: "Home" },
+  },
+  { _id: false }
+);
+
+// ─── Main Order Schema ───
 const orderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: [true, "User is required"],
+      index: true,
+    },
+    items: {
+      type: [orderItemSchema],
       required: true,
+      validate: {
+        validator: function (v) {
+          return v && v.length > 0;
+        },
+        message: "Order must have at least one item",
+      },
     },
-    items: [orderItemSchema],
-    customerName: {
-      type: String,
-      required: true,
+    deliveryAddress: {
+      type: deliveryAddressSchema,
+      required: [true, "Delivery address is required"],
     },
-    phone: {
+    paymentMethod: {
       type: String,
-      required: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    slot: {
-      type: String,
-      default: "9 AM - 11 AM",
-    },
-    payment: {
-      type: String,
+      enum: ["Cash on Delivery", "UPI", "Card"],
       default: "Cash on Delivery",
     },
-    express: {
-      type: Boolean,
-      default: false,
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
     },
-    deliveryFee: {
-      type: Number,
-      default: 25,
+    orderStatus: {
+      type: String,
+      enum: ["Pending", "Confirmed", "Packed", "Out for Delivery", "Delivered", "Cancelled"],
+      default: "Pending",
     },
-    discount: {
-      type: Number,
-      default: 0,
-    },
-    total: {
+    totalItems: {
       type: Number,
       required: true,
+      min: 1,
     },
-    pointsEarned: {
+    totalAmount: {
       type: Number,
-      default: 0,
+      required: true,
+      min: 0,
     },
-    status: {
-      type: String,
-      enum: ["Pending", "Confirmed", "Preparing", "Out for Delivery", "Delivered", "Cancelled"],
-      default: "Pending",
+    orderedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }
