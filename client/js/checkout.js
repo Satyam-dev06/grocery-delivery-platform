@@ -3,10 +3,18 @@ const applyCoupon = document.getElementById("applyCoupon");
 
 let discount = 0;
 
+// Safely get item price — handles both flat format (price directly)
+// and nested API format (product: { price }) for legacy localStorage data
+function getItemPrice(item) {
+  if (item.price !== undefined) return item.price;
+  if (item.product && item.product.price !== undefined) return item.product.price;
+  return 0;
+}
+
 function updateSummary() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   let productTotal = 0;
-  cart.forEach(function (p) { productTotal += p.price * p.quantity; });
+  cart.forEach(function (p) { productTotal += getItemPrice(p) * p.quantity; });
   let delivery = 25;
   const expressEl = document.getElementById("express");
   if (expressEl && expressEl.checked) delivery = 49;
@@ -64,7 +72,7 @@ form.addEventListener("submit", async function (event) {
   }
 
   let productTotal = 0;
-  cart.forEach(function (p) { productTotal += p.price * p.quantity; });
+  cart.forEach(function (p) { productTotal += getItemPrice(p) * p.quantity; });
   const expressEl = document.getElementById("express");
   const express = expressEl ? expressEl.checked : false;
   const delivery = express ? 49 : 25;

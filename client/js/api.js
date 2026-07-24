@@ -72,32 +72,89 @@ async function fetchProducts() {
 }
 
 // ─── Cart ───
+
+/**
+ * Normalize cart items from API format to flat format.
+ *
+ * API format:  { product: { _id, name, price, image, ... }, quantity }
+ * Flat format: { _id, id, name, price, image, quantity }
+ *
+ * The frontend rendering code expects flat format. This normalizer
+ * converts at the API boundary so localStorage and UI always get
+ * the simple flat structure.
+ */
+function normalizeCartItems(items) {
+  if (!items || !Array.isArray(items)) return [];
+  return items.map(function (item) {
+    // Check if item has nested product object (API format)
+    if (item.product && typeof item.product === "object" && item.product._id) {
+      return {
+        _id: item.product._id,
+        id: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        oldPrice: item.product.oldPrice || 0,
+        image: item.product.image,
+        stock: item.product.stock,
+        rating: item.product.rating || 0,
+        quantity: item.quantity,
+      };
+    }
+    // Already flat (localStorage format from non-logged-in adds)
+    return item;
+  });
+}
+
 async function fetchCart() {
   try {
-    return await apiRequest("/cart");
+    const data = await apiRequest("/cart");
+    if (data && data.items) data.items = normalizeCartItems(data.items);
+    return data;
   } catch (e) {
     return { items: [] };
   }
 }
 
 async function addToCartAPI(productId, quantity) {
-  return await apiRequest("/cart", {
+  const data = await apiRequest("/cart", {
     method: "POST",
     body: JSON.stringify({ productId, quantity }),
   });
+  if (data && data.items) {
+    data.items = normalizeCartItems(data.items);
+  }
+  return data;
 }
 
 async function updateCartItemAPI(productId, quantity) {
-  return await apiRequest("/cart/" + productId, {
+  const data = await apiRequest("/cart/" + productId, {
     method: "PUT",
     body: JSON.stringify({ quantity }),
   });
+  if (data && data.items) {
+    data.items = normalizeCartItems(data.items);
+  }
+  return data;
 }
 
 async function removeFromCartAPI(productId) {
-  return await apiRequest("/cart/" + productId, {
+  const data = await apiRequest("/cart/" + productId, {
     method: "DELETE",
   });
+  if (data && data.items) {
+    data.items = normalizeCartItems(data.items);
+  }
+  return data;
+}
+
+async function clearCartAPI() {
+  const data = await apiRequest("/cart", {
+    method: "DELETE",
+  });
+  if (data && data.items) {
+    data.items = normalizeCartItems(data.items);
+  }
+  return data;
 }
 
 // ─── Orders ───
