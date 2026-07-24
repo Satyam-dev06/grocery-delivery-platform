@@ -25,7 +25,7 @@ function displayProducts(productList) {
     const id = product._id || product.id;
     productContainer.innerHTML += `
       <div class="product-card">
-        <div class="wishlist" onclick="addWishlist('${id}')">${wishlist.includes(id) ? "❤️" : "🤍"}</div>
+        <div class="wishlist" onclick="addWishlist('${id}')">${wishlist.map(String).includes(String(id)) ? "❤️" : "🤍"}</div>
         <div class="discount-badge">${Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% OFF</div>
         <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
         <h3>${product.name}</h3>
@@ -64,12 +64,15 @@ async function addToCart(id) {
   } else {
     // localStorage fallback
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existing = cart.find(function (item) { return item.id === id; });
+    // Check by both _id and id (API products use _id, fallback products use id)
+    const existing = cart.find(function (item) { return (item._id || item.id) === id; });
     if (existing) {
       existing.quantity++;
     } else {
       const product = allProducts.find(function (p) { return (p._id || p.id) === id; });
-      if (product) cart.push({ ...product, quantity: 1 });
+      if (product) {
+        cart.push({ ...product, quantity: 1, id: id });
+      }
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
@@ -78,16 +81,44 @@ async function addToCart(id) {
   }
 }
 
-// Add to wishlist
-function addWishlist(id) {
+// Add to wishlist (uses API when logged in, localStorage fallback)
+async function addWishlist(id) {
   const idStr = String(id);
-  if (!wishlist.includes(idStr)) {
-    wishlist.push(idStr);
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    showToast("Added to Wishlist");
-    displayProducts(allProducts);
-  } else {
+  const wishlistStr = wishlist.map(String);
+
+  if (wishlistStr.includes(idStr)) {
     showToast("Already in Wishlist");
+    return;
+  }
+
+  if (isLoggedIn()) {
+    try {
+      await addToWishlistAPI(id);
+    } catch (e) {
+      showToast("Error: " + e.message);
+      return;
+    }
+  }
+
+  // Update local state and localStorage
+  wishlist.push(idStr);
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  showToast("Added to Wishlist ❤️");
+  displayProducts(allProducts);
+}
+
+// Sync wishlist from API on page load (used after login)
+async function syncWishlistFromAPI() {
+  if (isLoggedIn()) {
+    try {
+      const apiWishlist = await fetchWishlistAPI();
+      wishlist = apiWishlist.map(function (item) {
+        return String(item.product._id || item.product.id);
+      });
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    } catch (e) {
+      // Keep existing localStorage wishlist
+    }
   }
 }
 
@@ -165,6 +196,7 @@ if (scrollButton) {
   } catch (e) {
     allProducts = (typeof products !== "undefined") ? products : [];
   }
+  await syncWishlistFromAPI();
   displayProducts(allProducts);
   displayRecommendations();
   displayTrendingProducts();
@@ -185,6 +217,8 @@ function updateNavbar() {
         const stored = Number(localStorage.getItem("points")) || 0;
         pointsEl.textContent = stored;
       }
+      // Sync wishlist when user profile loads (user just logged in)
+      syncWishlistFromAPI();
     }).catch(function () {
       loginBtn.innerHTML = "Login";
       loginBtn.onclick = function () { window.location.href = "login.html"; };

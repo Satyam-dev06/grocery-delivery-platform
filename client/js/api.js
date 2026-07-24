@@ -36,6 +36,7 @@ async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+// ─── Auth ───
 async function registerUser(name, email, password, phone, address) {
   const data = await apiRequest("/users/register", {
     method: "POST",
@@ -65,10 +66,12 @@ function logoutUser() {
   window.location.href = "login.html";
 }
 
+// ─── Products ───
 async function fetchProducts() {
   return await apiRequest("/products");
 }
 
+// ─── Cart ───
 async function fetchCart() {
   try {
     return await apiRequest("/cart");
@@ -97,6 +100,7 @@ async function removeFromCartAPI(productId) {
   });
 }
 
+// ─── Orders ───
 async function createOrder(orderData) {
   return await apiRequest("/orders", {
     method: "POST",
@@ -106,4 +110,32 @@ async function createOrder(orderData) {
 
 async function fetchOrders() {
   return await apiRequest("/orders");
+}
+
+// ─── Wishlist ───
+async function addToWishlistAPI(productId) {
+  return await apiRequest("/wishlist", {
+    method: "POST",
+    body: JSON.stringify({ productId }),
+  });
+}
+
+async function fetchWishlistAPI() {
+  try {
+    return await apiRequest("/wishlist");
+  } catch (e) {
+    return [];
+  }
+}
+
+async function removeFromWishlistAPI(productId) {
+  return await apiRequest("/wishlist/" + productId, {
+    method: "DELETE",
+  });
+}
+
+async function clearWishlistAPI() {
+  return await apiRequest("/wishlist", {
+    method: "DELETE",
+  });
 }
