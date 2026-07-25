@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Successful - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .pay-result {
+      max-width: 550px;
+      margin: 60px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.1);
+      text-align: center;
+    }
+    .success-anim {
+      font-size: 80px;
+      animation: successBounce 0.6s ease;
+    }
+    @keyframes successBounce {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .txn-box {
+      background: #F8FFF4;
+      border: 1px solid #C8E6C9;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 25px 0;
+      text-align: left;
+    }
+    .txn-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 15px;
+    }
+    .txn-row .label { color: #888; }
+    .txn-row .value { font-weight: bold; color: #1B4332; }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <div class="logo">GroceryHub</div>
+    <button onclick="window.location.href='index.html'"> Home</button>
+  </nav>
+</header>
+
+<main>
+  <section class="pay-result" id="successPage">
+    <div class="success-anim"></div>
+    <h1 style="color:#2E7D32;margin:20px 0;">Payment Successful!</h1>
+    
+    <div class="txn-box" id="txnDetails">
+      <div class="txn-row">
+        <span class="label">Transaction ID</span>
+        <span class="value" id="txnId">---</span>
+      </div>
+      <div class="txn-row">
+        <span class="label">Order ID</span>
+        <span class="value" id="orderIdDisplay">---</span>
+      </div>
+      <div class="txn-row">
+        <span class="label">Amount Paid</span>
+        <span class="value" id="paidAmount">0</span>
+      </div>
+      <div class="txn-row">
+        <span class="label">Payment Method</span>
+        <span class="value" id="payMethodDisplay">---</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+      <button class="shop-btn" onclick="window.location.href='order-details.html?id=' + getOrderId()" style="padding:16px 36px;">
+        View Order
+      </button>
+      <button class="category-btn" onclick="window.location.href='index.html'" style="padding:16px 36px;">
+        Continue Shopping
+      </button>
+    </div>
+  </section>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+document.getElementById("txnId").textContent = params.get("txn") || "N/A";
+const orderId = params.get("orderId") || "";
+document.getElementById("orderIdDisplay").textContent = "#" + (orderId ? orderId.slice(-8).toUpperCase() : "N/A");
+document.getElementById("paidAmount").textContent = "\u20B9" + (parseInt(params.get("amount")) || 0).toLocaleString("en-IN");
+document.getElementById("payMethodDisplay").textContent = params.get("method") || "UPI";
+document.querySelector(".success-anim").textContent = "\u2705";
+
+function getOrderId() { return orderId; }
+</script>
+
+</body>
+</html>

@@ -4,6 +4,41 @@ const btnText = document.getElementById("btnText");
 const btnSpinner = document.getElementById("btnSpinner");
 const checkoutMessage = document.getElementById("checkoutMessage");
 
+// ─── Payment Method UI ───
+const paymentMethodEl = document.getElementById("payment");
+const codInfo = document.getElementById("codInfo");
+const upiSection = document.getElementById("upiSection");
+const cardSection = document.getElementById("cardSection");
+const paymentExtra = document.getElementById("paymentExtra");
+const payNowBtn = document.getElementById("payNowBtn");
+const payNowText = document.getElementById("payNowText");
+const payNowSpinner = document.getElementById("payNowSpinner");
+
+function togglePaymentUI() {
+  const method = paymentMethodEl ? paymentMethodEl.value : "Cash on Delivery";
+
+  // Hide all sections first
+  if (codInfo) codInfo.style.display = "none";
+  if (upiSection) upiSection.style.display = "none";
+  if (cardSection) cardSection.style.display = "none";
+  if (paymentExtra) paymentExtra.style.display = "none";
+
+  if (method === "Cash on Delivery") {
+    if (codInfo) codInfo.style.display = "block";
+  } else if (method === "UPI") {
+    if (upiSection) upiSection.style.display = "block";
+    if (paymentExtra) paymentExtra.style.display = "block";
+  } else if (method === "Card") {
+    if (cardSection) cardSection.style.display = "block";
+    if (paymentExtra) paymentExtra.style.display = "block";
+  }
+}
+
+// Listen for payment method changes
+if (paymentMethodEl) {
+  paymentMethodEl.addEventListener("change", togglePaymentUI);
+}
+
 // ─── Update Order Summary ───
 function updateSummary() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -56,14 +91,14 @@ async function loadSavedAddresses() {
         addr._id +
         '" ' +
         checked +
-        ">\n          <div class=\"address-option\">\n            <strong>" +
+        '>\n          <div class="address-option">\n            <strong>' +
         icon +
         " " +
         addr.fullName +
         "</strong><br>\n            " +
         addrLine +
         (addr.landmark ? " (Near: " + addr.landmark + ")" : "") +
-        "\n            <br><small>" +
+        '\n            <br><small>' +
         addr.phone +
         "</small>\n            " +
         (isDefault ? '<span class="default-tag">\u{2B50} Default</span>' : "") +
@@ -103,6 +138,7 @@ async function loadSavedAddresses() {
     return;
   }
   updateSummary();
+  togglePaymentUI(); // Show initial payment UI based on default selection
 })();
 
 // ─── Place Order ───
@@ -127,15 +163,12 @@ form.addEventListener("submit", async function (event) {
   }
 
   const addressId = selectedRadio.value;
+  const paymentMethod = paymentMethodEl ? paymentMethodEl.value : "Cash on Delivery";
 
-  // Get payment method
-  const paymentEl = document.getElementById("payment");
-  const paymentMethod = paymentEl ? paymentEl.value : "Cash on Delivery";
-
-  // Show loading state
+  // Show loading state on Place Order button
   if (placeOrderBtn) {
     placeOrderBtn.disabled = true;
-    if (btnText) btnText.textContent = "Placing Order...";
+    if (btnText) btnText.textContent = "Creating Order...";
     if (btnSpinner) btnSpinner.style.display = "inline-block";
   }
   if (checkoutMessage) {
@@ -143,9 +176,18 @@ form.addEventListener("submit", async function (event) {
   }
 
   try {
-    await placeOrderAPI(addressId, paymentMethod);
+    // Step 1: Create the order (paymentStatus = Pending for all methods)
+    const order = await placeOrderAPI(addressId, paymentMethod);
     localStorage.removeItem("cart");
-    window.location.href = "orders.html";
+
+    // Step 2: Handle based on payment method
+    if (paymentMethod === "Cash on Delivery") {
+      // COD: redirect directly to order-success
+      window.location.href = "order-success.html?id=" + order._id;
+    } else {
+      // UPI or Card: redirect to payment processing page
+      window.location.href = "payment.html?orderId=" + order._id + "&method=" + encodeURIComponent(paymentMethod);
+    }
   } catch (error) {
     if (checkoutMessage) {
       checkoutMessage.textContent = "Order failed: " + error.message;

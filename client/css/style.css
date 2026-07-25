@@ -2527,3 +2527,32 @@ box-shadow:0 10px 20px rgba(0,0,0,.2);
     flex-direction:column;
     gap:5px;
 }
+
+/* ==========================
+   Payment Pages
+=========================== */
+
+.payment-info-box {
+    border-radius:8px;
+    margin:10px 0;
+    transition:.3s;
+}
+
+.txn-box {
+    background: #F8FFF4;
+    border: 1px solid #C8E6C9;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.txn-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 15px;
+}
+
+.txn-row .label { color: #888; }
+.txn-row .value { font-weight: bold; color: #1B4332; }

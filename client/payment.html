@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Processing Payment - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .payment-proc {
+      max-width: 550px;
+      margin: 60px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.1);
+      text-align: center;
+    }
+    .payment-proc h2 { color:#1B4332; margin-bottom:10px; }
+    .order-amount { font-size:36px; font-weight:bold; color:#2E7D32; margin:20px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <div class="logo">GroceryHub</div>
+    <button onclick="window.location.href='index.html'"> Home</button>
+  </nav>
+</header>
+
+<main>
+  <section class="payment-proc" id="paymentPage">
+    <div style="font-size:60px;margin-bottom:20px;">
+      <span id="methodIcon"></span>
+    </div>
+    <h2 id="payTitle">Processing Payment</h2>
+    <p style="color:#888;font-size:14px;" id="orderIdDisplay">Order: #---</p>
+    <div class="order-amount" id="amountDisplay">0</div>
+
+    <!-- UPI Section -->
+    <div id="upiPaySection" style="display:none;">
+      <div style="background:#f0fff0;border-radius:12px;padding:25px;margin:20px 0;">
+        <div style="font-size:100px;margin-bottom:10px;">*</div>
+        <p style="font-weight:bold;">Scan this QR code to pay</p>
+        <p style="color:#666;font-size:14px;">or UPI ID: <strong>groceryhub@upi</strong></p>
+      </div>
+    </div>
+
+    <!-- Card Section -->
+    <div id="cardPaySection" style="display:none;text-align:left;margin:20px 0;">
+      <div style="background:#f8f8f8;border-radius:12px;padding:20px;">
+        <p style="font-weight:bold;margin-bottom:15px;">Card Details</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="payCardNumber" placeholder="Card Number" maxlength="19" class="pay-input">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <input type="text" id="payCardExpiry" placeholder="MM/YY" maxlength="5" class="pay-input">
+            <input type="text" id="payCardCvv" placeholder="CVV" maxlength="4" class="pay-input">
+          </div>
+          <input type="text" id="payCardHolder" placeholder="Card Holder Name" class="pay-input">
+        </div>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <p id="payMessage" style="font-weight:bold;min-height:30px;margin:15px 0;"></p>
+
+    <!-- Pay Button -->
+    <button id="processPayBtn" class="shop-btn" style="padding:16px 50px;font-size:18px;display:inline-flex;align-items:center;gap:10px;">
+      <span id="processPayText">Pay Now</span>
+      <span id="processPaySpinner" style="display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span>
+    </button>
+  </section>
+</main>
+
+<style>
+.pay-input {
+  padding:14px;font-size:15px;border:1px solid #ddd;border-radius:8px;outline:none;transition:.3s;
+}
+.pay-input:focus { border-color:#2E7D32; box-shadow:0 0 0 3px rgba(46,125,50,.15); }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script src="./js/api.js"></script>
+<script src="./js/payment.js"></script>
+
+</body>
+</html>

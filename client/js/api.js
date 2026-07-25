@@ -260,3 +260,33 @@ async function setDefaultAddress(id) {
     method: "PUT",
   });
 }
+
+// ─── Payment ───
+
+/**
+ * Create/process a payment for an existing order.
+ * Used for UPI and Card payments after order creation.
+ */
+async function createPaymentAPI(orderId, paymentMethod) {
+  return await apiRequest("/payment/create", {
+    method: "POST",
+    body: JSON.stringify({ orderId, paymentMethod }),
+  });
+}
+
+/**
+ * Verify a payment by transaction ID.
+ */
+async function verifyPaymentAPI(transactionId) {
+  return await apiRequest("/payment/verify", {
+    method: "POST",
+    body: JSON.stringify({ transactionId }),
+  });
+}
+
+/**
+ * Get payment details by order ID.
+ */
+async function fetchPaymentByOrder(orderId) {
+  return await apiRequest("/payment/" + orderId);
+}

@@ -10,20 +10,20 @@
 
 <header>
   <nav class="navbar">
-    <div class="logo">🛒 GroceryHub</div>
+    <div class="logo">GroceryHub</div>
     <button onclick="window.location.href='cart.html'">← Back to Cart</button>
   </nav>
 </header>
 
 <main>
   <section class="checkout">
-    <h2>📋 Checkout</h2>
+    <h2>Checkout</h2>
 
     <form id="checkoutForm">
 
       <!-- Saved Addresses -->
       <div id="savedAddressesSection">
-        <label>📍 Select Delivery Address</label>
+        <label>Select Delivery Address</label>
         <div id="savedAddressList">
           <p style="color:#999;padding:20px;">Loading addresses...</p>
         </div>
@@ -33,12 +33,48 @@
       <hr style="margin:15px 0;border-color:#eee;">
 
       <!-- Payment Method -->
-      <label for="payment">💳 Payment Method</label>
+      <label for="payment">Payment Method</label>
       <select id="payment" required>
         <option value="Cash on Delivery">Cash on Delivery</option>
         <option value="UPI">UPI</option>
         <option value="Card">Card</option>
       </select>
+
+      <!-- COD Info -->
+      <div id="codInfo" class="payment-info-box" style="display:none;background:#FFF3E0;border-left:4px solid #FF9800;padding:15px;border-radius:8px;">
+        <strong>You will pay on delivery.</strong> No online payment required.
+      </div>
+
+      <!-- UPI Section -->
+      <div id="upiSection" class="payment-info-box" style="display:none;text-align:center;background:#E8F5E9;border-left:4px solid #2E7D32;padding:20px;border-radius:8px;">
+        <div style="font-size:80px;margin-bottom:10px;">📱</div>
+        <p style="font-weight:bold;font-size:16px;color:#1B4332;">Scan & Pay via UPI</p>
+        <div style="background:white;width:200px;height:200px;margin:15px auto;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 15px rgba(0,0,0,.1);">
+          <div style="font-size:160px;opacity:0.3;">▨</div>
+        </div>
+        <p style="color:#666;font-size:14px;">or enter UPI ID: <strong style="color:#2E7D32;">groceryhub@upi</strong></p>
+      </div>
+
+      <!-- Card Section -->
+      <div id="cardSection" class="payment-info-box" style="display:none;background:white;border:1px solid #ddd;padding:20px;border-radius:12px;">
+        <p style="font-weight:bold;font-size:16px;color:#1B4332;margin-bottom:15px;">💳 Card Details</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="cardNumber" placeholder="Card Number" maxlength="19" style="padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px;outline:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" style="padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px;outline:none;">
+            <input type="text" id="cardCvv" placeholder="CVV" maxlength="4" style="padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px;outline:none;">
+          </div>
+          <input type="text" id="cardHolder" placeholder="Card Holder Name" style="padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px;outline:none;">
+        </div>
+      </div>
+
+      <!-- Extra Payment Area (for UPI/Card Pay Now button) -->
+      <div id="paymentExtra" style="display:none;text-align:center;margin-top:10px;">
+        <button type="button" id="payNowBtn" class="shop-btn" style="padding:16px 50px;font-size:18px;display:inline-flex;align-items:center;gap:10px;">
+          <span id="payNowText">Pay Now</span>
+          <span id="payNowSpinner" style="display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span>
+        </button>
+      </div>
 
       <!-- Order Summary -->
       <div class="order-summary">
@@ -50,8 +86,8 @@
       <!-- Message Area -->
       <p id="checkoutMessage" style="text-align:center;font-weight:bold;min-height:24px;"></p>
 
-      <!-- Submit Button with Loading Spinner -->
-      <button class="shop-btn" type="submit" id="placeOrderBtn" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+      <!-- Submit Button -->
+      <button class="shop-btn" type="submit" id="placeOrderBtn" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
         <span id="btnText">Place Order</span>
         <span id="btnSpinner" style="display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span>
       </button>

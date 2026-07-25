@@ -107,7 +107,14 @@ function buildTimeline(currentStatus) {
 
   try {
     const order = await fetchOrderById(orderId);
-    renderOrder(order);
+    // Try to fetch payment details for this order
+    let payment = null;
+    try {
+      payment = await fetchPaymentByOrder(orderId);
+    } catch (e) {
+      // No payment record found — that's fine for COD orders
+    }
+    renderOrder(order, payment);
   } catch (e) {
     pageEl.innerHTML =
       '<div class="empty-state"><h3>\u26A0\uFE0F Error</h3><p>' +
@@ -117,7 +124,7 @@ function buildTimeline(currentStatus) {
 })();
 
 // ─── Render Order ───
-function renderOrder(order) {
+function renderOrder(order, payment) {
   const statusInfo = statusColors[order.orderStatus] || { bg: "#eee", color: "#666", icon: "\u2022" };
   const addr = order.deliveryAddress || {};
   const items = order.items || [];
@@ -187,6 +194,7 @@ function renderOrder(order) {
     '<div class="summary-row"><span>Total Amount</span><span class="total-amount">' + formatPrice(order.totalAmount) + "</span></div>" +
     '<div class="summary-row"><span>Payment Method</span><span>' + (order.paymentMethod || "Cash on Delivery") + "</span></div>" +
     '<div class="summary-row"><span>Payment Status</span><span style="color:' + (order.paymentStatus === "Paid" ? "#2E7D32" : order.paymentStatus === "Failed" ? "#C62828" : "#E65100") + ";font-weight:bold;">" + (order.paymentStatus || "Pending") + "</span></div>" +
+    (payment && payment.transactionId ? '<div class="summary-row"><span>Transaction ID</span><span style="font-family:monospace;color:#1565C0;font-size:13px;">' + payment.transactionId + "</span></div>" : "") +
     '<div class="summary-row"><span>Order Date</span><span>' + formatDate(order.orderedAt || order.createdAt) + "</span></div>" +
     "</div>" +
     "</div>" +

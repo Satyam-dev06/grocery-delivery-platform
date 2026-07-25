@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Failed - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .pay-result {
+      max-width: 550px;
+      margin: 60px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.1);
+      text-align: center;
+    }
+    .fail-anim { font-size: 80px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <div class="logo">GroceryHub</div>
+    <button onclick="window.location.href='index.html'"> Home</button>
+  </nav>
+</header>
+
+<main>
+  <section class="pay-result">
+    <div class="fail-anim">\u274C</div>
+    <h1 style="color:#C62828;margin:20px 0;">Payment Failed</h1>
+    <p style="color:#666;font-size:16px;margin-bottom:10px;" id="errorDetail">Something went wrong with your payment.</p>
+    <p style="color:#999;font-size:14px;margin-bottom:40px;">Your order has been saved but payment is pending. You can retry from your orders page.</p>
+
+    <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+      <button class="shop-btn" onclick="retryPayment()" style="padding:16px 36px;background:#FF9800;">
+        Retry Payment
+      </button>
+      <button class="category-btn" onclick="window.location.href='orders.html'" style="padding:16px 36px;">
+        My Orders
+      </button>
+      <button class="category-btn" onclick="window.location.href='checkout.html'" style="padding:16px 36px;">
+        Back to Checkout
+      </button>
+    </div>
+  </section>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("orderId");
+const errorMsg = params.get("error");
+if (errorMsg) {
+  document.getElementById("errorDetail").textContent = errorMsg;
+}
+
+function retryPayment() {
+  if (orderId) {
+    const method = params.get("method") || "UPI";
+    window.location.href = "payment.html?orderId=" + orderId + "&method=" + encodeURIComponent(method);
+  } else {
+    window.location.href = "checkout.html";
+  }
+}
+</script>
+
+</body>
+</html>

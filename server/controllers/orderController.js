@@ -87,7 +87,8 @@ const placeOrder = async (req, res) => {
       items,
       deliveryAddress,
       paymentMethod: method,
-      paymentStatus: method === "Cash on Delivery" ? "Pending" : "Paid",
+      paymentStatus: "Pending", // Payment is processed separately via payment module
+      // For COD: stays Pending until delivery. For UPI/Card: updated to Paid by payment module
       orderStatus: "Pending",
       totalItems,
       totalAmount,

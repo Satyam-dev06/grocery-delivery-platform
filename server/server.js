@@ -11,6 +11,8 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
+const addressRoutes = require("./routes/addressRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/address", addressRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Health check
 app.get("/", (req, res) => {
