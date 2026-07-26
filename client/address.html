@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Addresses - GroceryHub</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <div class="logo">🛒 GroceryHub</div>
+    <div class="nav-actions">
+      <button onclick="window.location.href='index.html'">🏠 Home</button>
+      <button onclick="window.location.href='cart.html'">🛒 Cart</button>
+      <button class="login-btn" onclick="window.location.href='login.html'">Login</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="address-page">
+    <h2>📍 My Addresses</h2>
+
+    <div id="addressList"></div>
+
+    <button id="showAddForm" class="shop-btn" onclick="showAddressForm()">+ Add New Address</button>
+
+    <!-- Add/Edit Address Form (hidden by default) -->
+    <div id="addressFormContainer" style="display:none">
+      <h3 id="formTitle">Add New Address</h3>
+      <form id="addressForm">
+        <input type="hidden" id="addressId" value="">
+
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" required>
+
+        <label for="addressLine1">Address Line 1</label>
+        <input type="text" id="addressLine1" placeholder="House/Flat No., Street" required>
+
+        <label for="addressLine2">Address Line 2</label>
+        <input type="text" id="addressLine2" placeholder="Area, Landmark (optional)">
+
+        <div class="form-row">
+          <div>
+            <label for="city">City</label>
+            <input type="text" id="city" required>
+          </div>
+          <div>
+            <label for="state">State</label>
+            <input type="text" id="state" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="pincode">Pincode</label>
+            <input type="text" id="pincode" required>
+          </div>
+          <div>
+            <label for="landmark">Landmark</label>
+            <input type="text" id="landmark" placeholder="Near...">
+          </div>
+        </div>
+
+        <label for="addressType">Address Type</label>
+        <select id="addressType">
+          <option value="Home">🏠 Home</option>
+          <option value="Work">💼 Work</option>
+          <option value="Other">📍 Other</option>
+        </select>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="isDefault"> Set as default address
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="shop-btn" id="saveAddressBtn">Save Address</button>
+          <button type="button" class="remove-btn" onclick="hideAddressForm()">Cancel</button>
+        </div>
+        <p id="formMessage"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script src="./js/api.js"></script>
+<script src="./js/address.js"></script>
+</body>
+</html>

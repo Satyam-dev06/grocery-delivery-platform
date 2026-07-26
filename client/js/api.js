@@ -67,8 +67,47 @@ function logoutUser() {
 }
 
 // ─── Products ───
-async function fetchProducts() {
-  return await apiRequest("/products");
+
+/**
+ * Fetch products with search, filters, sorting & pagination.
+ * All params are optional.
+ *
+ * @param {Object} opts
+ * @param {number} opts.page        - Page number (default: 1)
+ * @param {number} opts.limit       - Items per page (default: 12)
+ * @param {string} opts.search      - Search query
+ * @param {string} opts.category    - Category filter
+ * @param {string} opts.brand       - Brand filter
+ * @param {number} opts.minPrice    - Minimum price
+ * @param {number} opts.maxPrice    - Maximum price
+ * @param {number} opts.rating      - Minimum rating
+ * @param {string} opts.stock       - "in" or "out"
+ * @param {string} opts.featured    - "true" to filter featured
+ * @param {string} opts.trending    - "true" to filter trending
+ * @param {string} opts.recommended - "true" to filter recommended
+ * @param {string} opts.offers      - "true" to filter discounted items
+ * @param {string} opts.sort        - Sort order
+ * @returns {Promise<{products, pagination, filters}>}
+ */
+async function fetchProducts(opts) {
+  opts = opts || {};
+  var params = [];
+  if (opts.page) params.push("page=" + opts.page);
+  if (opts.limit) params.push("limit=" + opts.limit);
+  if (opts.search) params.push("search=" + encodeURIComponent(opts.search));
+  if (opts.category) params.push("category=" + encodeURIComponent(opts.category));
+  if (opts.brand) params.push("brand=" + encodeURIComponent(opts.brand));
+  if (opts.minPrice) params.push("minPrice=" + opts.minPrice);
+  if (opts.maxPrice) params.push("maxPrice=" + opts.maxPrice);
+  if (opts.rating) params.push("rating=" + opts.rating);
+  if (opts.stock) params.push("stock=" + opts.stock);
+  if (opts.featured) params.push("featured=" + opts.featured);
+  if (opts.trending) params.push("trending=" + opts.trending);
+  if (opts.recommended) params.push("recommended=" + opts.recommended);
+  if (opts.offers) params.push("offers=" + opts.offers);
+  if (opts.sort) params.push("sort=" + opts.sort);
+  var qs = params.length > 0 ? "?" + params.join("&") : "";
+  return await apiRequest("/products" + qs);
 }
 
 // ─── Cart ───
@@ -289,4 +328,84 @@ async function verifyPaymentAPI(transactionId) {
  */
 async function fetchPaymentByOrder(orderId) {
   return await apiRequest("/payment/" + orderId);
+}
+
+// ─── Admin ───
+async function adminFetchDashboard() {
+  return await apiRequest("/admin/dashboard");
+}
+
+async function adminFetchUsers(page, search) {
+  var params = "?page=" + (page || 1) + "&limit=20";
+  if (search) params += "&search=" + encodeURIComponent(search);
+  return await apiRequest("/admin/users" + params);
+}
+
+async function adminUpdateUser(id, data) {
+  return await apiRequest("/admin/users/" + id, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+async function adminDeleteUser(id) {
+  return await apiRequest("/admin/users/" + id, { method: "DELETE" });
+}
+
+async function adminFetchOrders(page, status) {
+  var params = "?page=" + (page || 1) + "&limit=20";
+  if (status) params += "&status=" + encodeURIComponent(status);
+  return await apiRequest("/admin/orders" + params);
+}
+
+async function adminUpdateOrder(id, status) {
+  return await apiRequest("/admin/orders/" + id, {
+    method: "PUT",
+    body: JSON.stringify({ orderStatus: status }),
+  });
+}
+
+async function adminFetchPayments(page) {
+  return await apiRequest("/admin/payments?page=" + (page || 1));
+}
+
+async function adminRefundPayment(orderId) {
+  return await apiRequest("/admin/payments/refund/" + orderId, { method: "POST" });
+}
+
+async function adminFetchCoupons() {
+  return await apiRequest("/admin/coupons");
+}
+
+async function adminCreateCoupon(data) {
+  return await apiRequest("/admin/coupons", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+async function adminUpdateCoupon(id, data) {
+  return await apiRequest("/admin/coupons/" + id, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+async function adminDeleteCoupon(id) {
+  return await apiRequest("/admin/coupons/" + id, { method: "DELETE" });
+}
+
+async function adminFetchAnalytics() {
+  return await apiRequest("/admin/analytics");
+}
+
+async function adminFetchSettings() {
+  return await apiRequest("/admin/settings");
+}
+
+async function adminUpdateSettings(data) {
+  return await apiRequest("/admin/settings", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
 }

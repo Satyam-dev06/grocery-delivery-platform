@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coupons - Admin - GroceryHub</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()" aria-hidden="true"></div>
+  <a href="#couponsContent" class="skip-link">Skip to main content</a>
+
+  <aside class="admin-sidebar" id="adminSidebar" role="navigation" aria-label="Admin Navigation">
+    <div class="sidebar-header">
+      <div class="logo-icon" aria-hidden="true"><i class="fas fa-leaf"></i></div>
+      <h2>GroceryHub</h2>
+      <p>Admin Panel</p>
+    </div>
+    <ul class="nav-list">
+      <li><a href="index.html"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span><span class="nav-label">Dashboard</span></a></li>
+      <li><a href="products.html"><span class="nav-icon"><i class="fas fa-boxes"></i></span><span class="nav-label">Products</span></a></li>
+      <li><a href="orders.html"><span class="nav-icon"><i class="fas fa-truck"></i></span><span class="nav-label">Orders</span></a></li>
+      <li><a href="users.html"><span class="nav-icon"><i class="fas fa-users"></i></span><span class="nav-label">Users</span></a></li>
+      <li><a href="payments.html"><span class="nav-icon"><i class="fas fa-credit-card"></i></span><span class="nav-label">Payments</span></a></li>
+      <li><a href="coupons.html" class="active" aria-current="page"><span class="nav-icon"><i class="fas fa-tag"></i></span><span class="nav-label">Coupons</span></a></li>
+      <li><a href="analytics.html"><span class="nav-icon"><i class="fas fa-chart-line"></i></span><span class="nav-label">Analytics</span></a></li>
+      <li><a href="settings.html"><span class="nav-icon"><i class="fas fa-cog"></i></span><span class="nav-label">Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logoutUser();return false;" aria-label="Logout"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <header class="admin-topbar" role="banner">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+      <h1 class="page-title">Coupons</h1>
+    </div>
+    <div class="topbar-search" role="search">
+      <i class="fas fa-search search-icon" aria-hidden="true"></i>
+      <input type="search" placeholder="Search coupons..." aria-label="Search coupons">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" aria-label="Notifications"><i class="fas fa-bell"></i><span class="notification-dot"></span></button>
+      <div class="admin-user-profile" id="adminUser"><div class="avatar"><i class="fas fa-user-shield"></i></div><div class="user-info"><span class="user-name">Admin</span><span class="user-role">Administrator</span></div></div>
+      <button class="logout-btn" onclick="logoutUser()" aria-label="Logout"><i class="fas fa-right-from-bracket"></i><span>Logout</span></button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <div></div>
+      <button class="btn btn-primary" onclick="openCouponModal()"><i class="fas fa-plus"></i> Add Coupon</button>
+    </div>
+    <div id="couponsContent">
+      <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><span class="spinner-text">Loading coupons...</span></div>
+    </div>
+  </main>
+
+  <!-- Coupon Modal -->
+  <div class="modal-overlay" id="couponModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <h3 id="couponModalTitle"><i class="fas fa-tag"></i> Add Coupon</h3>
+      <form id="couponForm" onsubmit="saveCoupon(event)">
+        <input type="hidden" id="editCouponId">
+        <div class="admin-form-group">
+          <label><i class="fas fa-code"></i> Coupon Code</label>
+          <input id="coupCode" required placeholder="e.g. SAVE20">
+        </div>
+        <div class="admin-form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <label><i class="fas fa-percent"></i> Discount Type</label>
+            <select id="coupType">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed (₹)</option>
+            </select>
+          </div>
+          <div>
+            <label><i class="fas fa-indian-rupee-sign"></i> Discount Value</label>
+            <input id="coupValue" type="number" min="1" required>
+          </div>
+        </div>
+        <div class="admin-form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <label><i class="fas fa-indian-rupee-sign"></i> Min. Order</label>
+            <input id="coupMinOrder" type="number" value="0">
+          </div>
+          <div>
+            <label><i class="fas fa-ban"></i> Max Discount</label>
+            <input id="coupMaxDiscount" type="number" value="0">
+          </div>
+        </div>
+        <div class="admin-form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <label><i class="fas fa-calendar-alt"></i> Expiry Date</label>
+            <input id="coupExpiry" type="date" required>
+          </div>
+          <div>
+            <label><i class="fas fa-users"></i> Usage Limit</label>
+            <input id="coupUsageLimit" type="number" value="0">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="toggle-label">
+            <input id="coupActive" type="checkbox" checked> <i class="fas fa-check-circle" style="color:#2E7D32;"></i> Active
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeCouponModal()"><i class="fas fa-times"></i> Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="js/coupons.js"></script>
+</body>
+</html>

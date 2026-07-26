@@ -1,5 +1,8 @@
 const cartItems = document.getElementById("cartItems");
 const totalPrice = document.getElementById("totalPrice");
+const totalItems = document.getElementById("totalItems");
+const cartContainer = document.getElementById("cartContainer");
+const emptyCart = document.getElementById("emptyCart");
 
 let cart = [];
 
@@ -15,34 +18,65 @@ function showToast(message) {
   }
 }
 
+// Extract product ID from cart item (handles both API populated and localStorage formats)
+function getItemId(item) {
+  // API populated cart: item.product is an object with _id (Mongoose serializes ObjectId to string in JSON)
+  if (item.product && typeof item.product === 'object' && item.product._id) {
+    return item.product._id;
+  }
+  // API raw cart: item.product is a string ID
+  if (item.product && typeof item.product === 'string') {
+    return item.product;
+  }
+  // localStorage flat cart: item has _id or id
+  return item._id || item.id;
+}
+
 // Render cart items
 function renderCart() {
   if (!cartItems) return;
-  cartItems.innerHTML = "";
+
   if (cart.length === 0) {
-    cartItems.innerHTML = '<h2>Your Cart is Empty</h2>';
+    if (cartContainer) cartContainer.style.display = "none";
+    if (emptyCart) emptyCart.style.display = "block";
+    cartItems.innerHTML = "";
     if (totalPrice) totalPrice.textContent = "0";
+    if (totalItems) totalItems.textContent = "0";
     updateCartBadge();
     return;
   }
-  let total = 0;
+
+  if (cartContainer) cartContainer.style.display = "block";
+  if (emptyCart) emptyCart.style.display = "none";
+
+  cartItems.innerHTML = "";
+  let subtotal = 0;
+  let count = 0;
+
   cart.forEach(function (product) {
-    total += product.price * product.quantity;
-    const id = product._id || product.product || product.id;
+    const lineTotal = product.price * product.quantity;
+    subtotal += lineTotal;
+    count += product.quantity;
+    const id = getItemId(product);
     cartItems.innerHTML += `
       <div class="product-card">
         <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
-        <h3>${product.name}</h3>
-        <p>₹${product.price}</p>
+        <div class="cart-item-details">
+          <h3>${product.name}</h3>
+          <p class="cart-item-price">₹${product.price} × ${product.quantity}</p>
+          <p class="cart-item-subtotal">Subtotal: ₹${lineTotal}</p>
+        </div>
         <div class="quantity-controls">
-          <button onclick="decreaseQuantity('${id}')">-</button>
+          <button onclick="decreaseQuantity('${id}')">−</button>
           <span>${product.quantity}</span>
           <button onclick="increaseQuantity('${id}')">+</button>
         </div>
-        <button class="remove-btn" onclick="removeItem('${id}')">Remove</button>
+        <button class="remove-btn" onclick="removeItem('${id}')">✕ Remove</button>
       </div>`;
   });
-  if (totalPrice) totalPrice.textContent = total;
+
+  if (totalPrice) totalPrice.textContent = subtotal;
+  if (totalItems) totalItems.textContent = count;
   updateCartBadge();
 }
 
@@ -51,10 +85,16 @@ function updateCartBadge() {
   if (badge) badge.textContent = cart.length;
 }
 
+function findCartItem(id) {
+  return cart.find(function (p) {
+    return getItemId(p) === id;
+  });
+}
+
 async function increaseQuantity(id) {
   if (isLoggedIn()) {
     try {
-      const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+      const item = findCartItem(id);
       if (item) {
         const updated = await updateCartItemAPI(id, item.quantity + 1);
         cart = updated.items || [];
@@ -62,7 +102,7 @@ async function increaseQuantity(id) {
       }
     } catch (e) { showToast("Error: " + e.message); }
   } else {
-    const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+    const item = findCartItem(id);
     if (item) {
       item.quantity++;
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -74,7 +114,7 @@ async function increaseQuantity(id) {
 async function decreaseQuantity(id) {
   if (isLoggedIn()) {
     try {
-      const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+      const item = findCartItem(id);
       if (item && item.quantity > 1) {
         const updated = await updateCartItemAPI(id, item.quantity - 1);
         cart = updated.items || [];
@@ -82,7 +122,7 @@ async function decreaseQuantity(id) {
       }
     } catch (e) { showToast("Error: " + e.message); }
   } else {
-    const item = cart.find(function (p) { return (p._id || p.product || p.id) === id; });
+    const item = findCartItem(id);
     if (item && item.quantity > 1) {
       item.quantity--;
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -96,12 +136,30 @@ async function removeItem(id) {
     try {
       const updated = await removeFromCartAPI(id);
       cart = updated.items || [];
+      localStorage.setItem("cart", JSON.stringify(cart));
       renderCart();
     } catch (e) { showToast("Error: " + e.message); }
   } else {
-    cart = cart.filter(function (p) { return (p._id || p.product || p.id) !== id; });
+    cart = cart.filter(function (p) { return getItemId(p) !== id; });
     localStorage.setItem("cart", JSON.stringify(cart));
     renderCart();
+  }
+}
+
+async function clearCart() {
+  if (isLoggedIn()) {
+    try {
+      await clearCartAPI();
+      cart = [];
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+      showToast("Cart cleared");
+    } catch (e) { showToast("Error: " + e.message); }
+  } else {
+    cart = [];
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+    showToast("Cart cleared");
   }
 }
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payments - Admin - GroceryHub</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()" aria-hidden="true"></div>
+  <a href="#paymentsContent" class="skip-link">Skip to main content</a>
+
+  <aside class="admin-sidebar" id="adminSidebar" role="navigation" aria-label="Admin Navigation">
+    <div class="sidebar-header">
+      <div class="logo-icon" aria-hidden="true"><i class="fas fa-leaf"></i></div>
+      <h2>GroceryHub</h2>
+      <p>Admin Panel</p>
+    </div>
+    <ul class="nav-list">
+      <li><a href="index.html"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span><span class="nav-label">Dashboard</span></a></li>
+      <li><a href="products.html"><span class="nav-icon"><i class="fas fa-boxes"></i></span><span class="nav-label">Products</span></a></li>
+      <li><a href="orders.html"><span class="nav-icon"><i class="fas fa-truck"></i></span><span class="nav-label">Orders</span></a></li>
+      <li><a href="users.html"><span class="nav-icon"><i class="fas fa-users"></i></span><span class="nav-label">Users</span></a></li>
+      <li><a href="payments.html" class="active" aria-current="page"><span class="nav-icon"><i class="fas fa-credit-card"></i></span><span class="nav-label">Payments</span></a></li>
+      <li><a href="coupons.html"><span class="nav-icon"><i class="fas fa-tag"></i></span><span class="nav-label">Coupons</span></a></li>
+      <li><a href="analytics.html"><span class="nav-icon"><i class="fas fa-chart-line"></i></span><span class="nav-label">Analytics</span></a></li>
+      <li><a href="settings.html"><span class="nav-icon"><i class="fas fa-cog"></i></span><span class="nav-label">Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logoutUser();return false;" aria-label="Logout"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <header class="admin-topbar" role="banner">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+      <h1 class="page-title">Payments</h1>
+    </div>
+    <div class="topbar-search" role="search">
+      <i class="fas fa-search search-icon" aria-hidden="true"></i>
+      <input type="search" placeholder="Search payments..." aria-label="Search payments">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" aria-label="Notifications"><i class="fas fa-bell"></i><span class="notification-dot"></span></button>
+      <div class="admin-user-profile" id="adminUser"><div class="avatar"><i class="fas fa-user-shield"></i></div><div class="user-info"><span class="user-name">Admin</span><span class="user-role">Administrator</span></div></div>
+      <button class="logout-btn" onclick="logoutUser()" aria-label="Logout"><i class="fas fa-right-from-bracket"></i><span>Logout</span></button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div id="paymentsContent">
+      <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><span class="spinner-text">Loading payments...</span></div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="js/payments.js"></script>
+</body>
+</html>
