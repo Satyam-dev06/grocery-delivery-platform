@@ -17,6 +17,7 @@ const {
   getAnalytics,
   getSettings,
   updateSettings,
+  sendAdminNotification,
 } = require("../controllers/adminController");
 
 // All admin routes require protect + admin middleware
@@ -43,5 +44,7 @@ router.get("/analytics", getAnalytics);
 
 router.get("/settings", getSettings);
 router.put("/settings", updateSettings);
+
+router.post("/notifications", sendAdminNotification);
 
 module.exports = router;

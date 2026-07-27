@@ -21,6 +21,28 @@ function getAuthHeaders() {
   return token ? { Authorization: "Bearer " + token } : {};
 }
 
+/**
+ * AbortController-based fetch with timeout.
+ * If the request takes longer than `timeoutMs`, it throws.
+ */
+async function fetchWithTimeout(url, options, timeoutMs) {
+  timeoutMs = timeoutMs || 8000;
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, timeoutMs);
+  try {
+    var response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Centralized API request helper.
+ * - Automatically attaches JWT token
+ * - Handles 401 globally → clears token + redirects to login
+ * - Detects session expiry and shows toast
+ */
 async function apiRequest(endpoint, options = {}) {
   const url = API_BASE + endpoint;
   const headers = {
@@ -28,8 +50,43 @@ async function apiRequest(endpoint, options = {}) {
     ...getAuthHeaders(),
     ...options.headers,
   };
-  const response = await fetch(url, { ...options, headers });
-  const data = await response.json();
+  let response;
+  try {
+    response = await fetchWithTimeout(url, { ...options, headers });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw new Error("Request timed out. Please check your connection.");
+    }
+    throw e;
+  }
+
+  // Handle 401 Unauthorized globally
+  if (response.status === 401) {
+    removeToken();
+    // Show session expiry toast if user was logged in
+    var toast = document.getElementById("toast");
+    if (toast) {
+      toast.innerHTML = '<i class="fas fa-clock"></i> Session expired. Please login again.';
+      toast.className = "show toast-error";
+      setTimeout(function () { toast.className = ""; }, 3000);
+    }
+    // Only redirect if not already on login page
+    if (!window.location.pathname.includes("login")) {
+      setTimeout(function () {
+        window.location.href = "login.html";
+      }, 1000);
+    }
+    throw new Error("Session expired. Please login again.");
+  }
+
+  // Try to parse JSON; if it fails, read as text
+  var data;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = { message: "Invalid server response" };
+  }
+
   if (!response.ok) {
     throw new Error(data.message || "Request failed");
   }
@@ -67,6 +124,18 @@ function logoutUser() {
 }
 
 // ─── Products ───
+
+/**
+ * Fetch a single product by its ID.
+ * Returns full product details including name, brand, category,
+ * description, images, rating, stock, price, oldPrice, etc.
+ * Throws 404 if product does not exist.
+ */
+async function fetchProductById(id) {
+  return await apiRequest("/products/" + id);
+}
+
+/**
 
 /**
  * Fetch products with search, filters, sorting & pagination.
@@ -203,10 +272,13 @@ async function clearCartAPI() {
  * Sends addressId and paymentMethod — the backend reads
  * items from the cart, copies prices, and clears the cart.
  */
-async function placeOrderAPI(addressId, paymentMethod) {
+async function placeOrderAPI(addressId, paymentMethod, couponCode, discountAmount) {
+  var body = { addressId: addressId, paymentMethod: paymentMethod };
+  if (couponCode) body.couponCode = couponCode;
+  if (discountAmount) body.discountAmount = discountAmount;
   return await apiRequest("/orders", {
     method: "POST",
-    body: JSON.stringify({ addressId, paymentMethod }),
+    body: JSON.stringify(body),
   });
 }
 
@@ -395,6 +467,19 @@ async function adminDeleteCoupon(id) {
   return await apiRequest("/admin/coupons/" + id, { method: "DELETE" });
 }
 
+// ─── Coupons (Public) ───
+
+/**
+ * Apply a coupon code during checkout.
+ * Sends { code, cartTotal } and returns { valid, discount, finalTotal, message }.
+ */
+async function applyCouponAPI(code, cartTotal) {
+  return await apiRequest("/coupons/apply", {
+    method: "POST",
+    body: JSON.stringify({ code, cartTotal }),
+  });
+}
+
 async function adminFetchAnalytics() {
   return await apiRequest("/admin/analytics");
 }
@@ -408,4 +493,55 @@ async function adminUpdateSettings(data) {
     method: "PUT",
     body: JSON.stringify(data),
   });
+}
+
+
+// ─── Notifications ───
+
+/**
+ * Fetch notifications for the logged-in user.
+ */
+async function fetchNotifications(page) {
+  var params = page ? '?page=' + page : '';
+  return await apiRequest('/notifications' + params);
+}
+
+/**
+ * Get unread notification count.
+ */
+async function fetchUnreadCount() {
+  try {
+    var data = await apiRequest('/notifications/unread');
+    return data.count || 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+/**
+ * Mark a single notification as read.
+ */
+async function markNotificationRead(id) {
+  return await apiRequest('/notifications/read/' + id, { method: 'PUT' });
+}
+
+/**
+ * Mark all notifications as read.
+ */
+async function markAllNotificationsRead() {
+  return await apiRequest('/notifications/read-all', { method: 'PUT' });
+}
+
+/**
+ * Delete a single notification.
+ */
+async function deleteNotification(id) {
+  return await apiRequest('/notifications/' + id, { method: 'DELETE' });
+}
+
+/**
+ * Delete all notifications.
+ */
+async function deleteAllNotifications() {
+  return await apiRequest('/notifications', { method: 'DELETE' });
 }

@@ -9,6 +9,10 @@ const couponSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    description: {
+      type: String,
+      default: "",
+    },
     discountType: {
       type: String,
       enum: ["percentage", "fixed"],
@@ -18,6 +22,13 @@ const couponSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Discount value is required"],
       min: 1,
+      validate: {
+        validator: function(v) {
+          if (this.discountType === "percentage" && v > 100) return false;
+          return true;
+        },
+        message: "Percentage discount cannot exceed 100%",
+      },
     },
     minimumOrder: {
       type: Number,
@@ -42,6 +53,11 @@ const couponSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   { timestamps: true }

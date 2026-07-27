@@ -47,7 +47,13 @@ async function renderWishlist() {
   }
 
   if (wishlistProducts.length === 0) {
-    wishlistContainer.innerHTML = '<h2>Your Wishlist is Empty ❤️</h2>';
+    wishlistContainer.innerHTML =
+      '<div class="empty-wishlist" style="text-align:center;padding:80px 20px;">' +
+      '<i class="fa-solid fa-heart" style="font-size:72px;color:#e0e0e0;margin-bottom:20px;"></i>' +
+      '<h3 style="font-size:24px;color:var(--text);margin-bottom:10px;">Your Wishlist is Empty</h3>' +
+      '<p style="color:var(--text-muted);margin-bottom:30px;">Start adding your favorite products to your wishlist.</p>' +
+      '<a href="index.html" class="shop-btn" style="display:inline-flex;text-decoration:none;"><i class="fas fa-shopping-bag"></i> Start Shopping</a>' +
+      '</div>';
     return;
   }
 
@@ -55,8 +61,8 @@ async function renderWishlist() {
     const prodId = product._id || product.id;
     wishlistContainer.innerHTML += `
       <div class="product-card">
-        <img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">
-        <h3>${product.name}</h3>
+        <a href="product-details.html?id=${prodId}" class="pd-card-link"><img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'"></a>
+        <a href="product-details.html?id=${prodId}" class="pd-card-link"><h3>${product.name}</h3></a>
         <p class="price">₹${product.price}</p>
         <button onclick="window.location.href='cart.html'">🛒 Go To Cart</button>
         <button class="remove-wishlist-btn" onclick="removeFromWishlist('${prodId}')">❌ Remove</button>

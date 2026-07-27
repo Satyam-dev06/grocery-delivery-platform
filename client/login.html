@@ -4,62 +4,140 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - GroceryHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<header>
-  <nav class="navbar">
-    <div class="logo">GroceryHub</div>
-    <button onclick="window.location.href='index.html'">Home</button>
+<header role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="logo">🛒 GroceryHub</div>
+    <div class="nav-actions">
+      <button class="nav-btn nav-link-btn" onclick="window.location.href='index.html'">🏠 Home</button>
+    </div>
   </nav>
 </header>
 
-<main>
+<main id="main-content" role="main">
   <section class="auth-page">
-    <div class="auth-card">
-      <h2>Welcome to GroceryHub</h2>
+    <div class="auth-card" role="region" aria-label="Authentication">
+      <!-- Header -->
+      <h2 aria-live="polite">Welcome to GroceryHub</h2>
+      <p class="auth-subtitle">Fresh groceries, delivered to your doorstep</p>
 
-      <div class="auth-tabs">
-        <button id="loginTab" class="auth-tab active">Login</button>
-        <button id="registerTab" class="auth-tab">Register</button>
+      <!-- Tab Switcher -->
+      <div class="auth-tabs" role="tablist" aria-label="Login or Register">
+        <button id="loginTab" class="auth-tab active" role="tab" aria-selected="true" aria-controls="loginForm" tabindex="0">Sign In</button>
+        <button id="registerTab" class="auth-tab" role="tab" aria-selected="false" aria-controls="registerForm" tabindex="-1">Create Account</button>
       </div>
 
-      <form id="loginForm">
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+      <!-- ===== LOGIN FORM ===== -->
+      <form id="loginForm" novalidate aria-label="Login form">
+        <!-- Email -->
+        <div class="auth-field-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" aria-describedby="loginEmailError">
+          <span id="loginEmailError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter password" required>
+        <!-- Password -->
+        <div class="auth-field-group">
+          <label for="loginPassword">Password</label>
+          <div class="auth-password-wrap">
+            <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" aria-describedby="loginPasswordError" minlength="6">
+            <button type="button" class="auth-password-toggle" onclick="togglePasswordVisibility('loginPassword', this)" aria-label="Toggle password visibility" tabindex="0">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span id="loginPasswordError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <button type="submit" class="shop-btn">Login</button>
-        <p id="loginMessage"></p>
+        <!-- Remember Me + Forgot Password -->
+        <div class="auth-row">
+          <label class="auth-checkbox-label">
+            <input type="checkbox" id="rememberMe" aria-label="Remember me">
+            Remember me
+          </label>
+          <a href="#" class="auth-link" onclick="showToast('info', 'Password reset link has been sent to your email')" aria-label="Forgot password">Forgot Password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="shop-btn" id="loginSubmitBtn">
+          <span class="auth-spinner" id="loginSpinner"></span>
+          <span id="loginBtnText">Sign In</span>
+        </button>
+
+        <!-- Message -->
+        <div id="loginMessage" class="auth-message" role="alert"></div>
       </form>
 
-      <form id="registerForm" style="display:none">
-        <label for="regName">Full Name</label>
-        <input type="text" id="regName" placeholder="Your name" required>
+      <!-- ===== REGISTER FORM ===== -->
+      <form id="registerForm" style="display:none" novalidate aria-label="Registration form">
+        <!-- Full Name -->
+        <div class="auth-field-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" placeholder="John Doe" required autocomplete="name" aria-describedby="regNameError">
+          <span id="regNameError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <label for="regEmail">Email</label>
-        <input type="email" id="regEmail" placeholder="you@example.com" required>
+        <!-- Email -->
+        <div class="auth-field-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" placeholder="you@example.com" required autocomplete="email" aria-describedby="regEmailError">
+          <span id="regEmailError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <label for="regPassword">Password (6+ characters)</label>
-        <input type="password" id="regPassword" placeholder="Create a password" required>
+        <!-- Password -->
+        <div class="auth-field-group">
+          <label for="regPassword">Password <span class="auth-label-hint">(minimum 6 characters)</span></label>
+          <div class="auth-password-wrap">
+            <input type="password" id="regPassword" placeholder="Create a strong password" required autocomplete="new-password" aria-describedby="regPasswordError" minlength="6">
+            <button type="button" class="auth-password-toggle" onclick="togglePasswordVisibility('regPassword', this)" aria-label="Toggle password visibility" tabindex="0">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span id="regPasswordError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <label for="regPhone">Phone Number</label>
-        <input type="tel" id="regPhone" placeholder="+91 9876543210">
+        <!-- Phone Number -->
+        <div class="auth-field-group">
+          <label for="regPhone">Phone Number <span class="auth-label-hint">(optional)</span></label>
+          <input type="tel" id="regPhone" placeholder="+91 9876543210" autocomplete="tel" aria-describedby="regPhoneError">
+          <span id="regPhoneError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <label for="regAddress">Delivery Address</label>
-        <textarea id="regAddress" placeholder="Your address"></textarea>
+        <!-- Delivery Address -->
+        <div class="auth-field-group">
+          <label for="regAddress">Delivery Address <span class="auth-label-hint">(optional)</span></label>
+          <textarea id="regAddress" placeholder="Street, city, pincode..." rows="3" aria-describedby="regAddressError"></textarea>
+          <span id="regAddressError" class="auth-field-error" role="alert"></span>
+        </div>
 
-        <button type="submit" class="shop-btn">Create Account</button>
-        <p id="regMessage"></p>
+        <!-- Submit -->
+        <button type="submit" class="shop-btn" id="regSubmitBtn">
+          <span class="auth-spinner" id="regSpinner"></span>
+          <span id="regBtnText">Create Account</span>
+        </button>
+
+        <!-- Message -->
+        <div id="regMessage" class="auth-message" role="alert"></div>
       </form>
     </div>
   </section>
 </main>
 
+<!-- Toast Notification -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Scroll to Top -->
+<button id="scrollTop" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></button>
+
 <script src="./js/api.js"></script>
 <script src="./js/login.js"></script>
+<script src="./js/scroll-top.js"></script>
 </body>
 </html>

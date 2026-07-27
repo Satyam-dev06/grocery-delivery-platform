@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
+const { notifyOrderStatus, notifyAdmin } = require("../utils/notificationHelper");
 const Address = require("../models/Address");
 
 // ─────────────────────────────────────────────────────────
@@ -92,13 +93,31 @@ const placeOrder = async (req, res) => {
       orderStatus: "Pending",
       totalItems,
       totalAmount,
+      couponCode: req.body.couponCode || null,
+      discountAmount: req.body.discountAmount || 0,
+      finalAmount: (totalAmount - (req.body.discountAmount || 0)),
     });
 
     // ── Step 7: Clear the cart ──
     cart.items = [];
     await cart.save();
 
+    // ── Step 7b: Increment coupon usage if applied ──
+    if (req.body.couponCode) {
+      try {
+        const Coupon = require("../models/Coupon");
+        await Coupon.findOneAndUpdate(
+          { code: req.body.couponCode.toUpperCase().trim() },
+          { $inc: { usedCount: 1 } }
+        );
+      } catch (ce) {
+        // Non-critical: coupon usage increment failure won't fail the order
+      }
+    }
+
     res.status(201).json(order);
+    notifyOrderStatus(req.user._id, order, 'Pending').catch(function(e){});
+    notifyAdmin('new_order', { orderId: order._id.toString(), total: order.totalAmount }).catch(function(e){});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -182,6 +201,9 @@ const cancelOrder = async (req, res) => {
 
     order.orderStatus = "Cancelled";
     const updated = await order.save();
+
+    // Notify about cancellation
+    notifyOrderStatus(req.user._id, order, 'Cancelled').catch(function(e){});
 
     res.json({ message: "Order cancelled successfully", order: updated });
   } catch (error) {

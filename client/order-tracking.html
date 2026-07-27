@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking | GroceryHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class="tracking-page-body">
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <i class="fas fa-store-alt"></i> GroceryHub
+    </div>
+    <div class="nav-actions">
+      <button onclick="window.location.href='orders.html'">
+        <i class="fas fa-truck"></i> My Orders
+      </button>
+      <button onclick="window.location.href='index.html'">
+        <i class="fas fa-home"></i> Home
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main-content" role="main">
+  <!-- Loading -->
+  <div id="trackLoading" class="track-loading">
+    <div class="track-loading-spinner"></div>
+    <p>Loading order details...</p>
+  </div>
+
+  <!-- Error -->
+  <div id="trackError" class="track-error" style="display:none;">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h3>Something went wrong</h3>
+    <p id="trackErrorMessage">Could not load order details.</p>
+    <button class="shop-btn" onclick="location.reload()"><i class="fas fa-redo"></i> Retry</button>
+    <a href="orders.html" class="shop-btn-outline" style="margin-top:10px;display:inline-flex;"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+  </div>
+
+  <!-- Content -->
+  <div id="trackContent" class="track-page" style="display:none;">
+    <!-- Header -->
+    <div class="track-header">
+      <div class="track-header-left">
+        <h1><i class="fas fa-truck"></i> Track Order</h1>
+        <span class="track-order-id" id="trackOrderId">#------</span>
+      </div>
+      <div class="track-header-right">
+        <span class="track-date" id="trackOrderDate">-</span>
+        <span class="track-estimated" id="trackEstimatedTime">-</span>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="track-status-bar">
+      <div class="tsb-icon" id="trackStatusIcon"><i class="fas fa-spinner fa-pulse"></i></div>
+      <div class="tsb-text">
+        <strong id="trackStatusTitle">Loading...</strong>
+        <span id="trackStatusSubtitle">-</span>
+      </div>
+      <button class="tsb-refresh" onclick="loadOrder()" aria-label="Refresh tracking"><i class="fas fa-sync-alt"></i></button>
+    </div>
+
+    <div class="track-grid">
+      <!-- LEFT: Timeline + Map -->
+      <div class="track-left">
+        <!-- Timeline Section -->
+        <div class="track-card">
+          <h3><i class="fas fa-clock"></i> Order Timeline</h3>
+          <div id="trackTimeline" class="track-timeline"></div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="track-card">
+          <h3><i class="fas fa-map-marked-alt"></i> Live Location</h3>
+          <div id="trackMapContainer" class="track-map-container">
+            <div id="trackMap" class="track-map"></div>
+          </div>
+        </div>
+
+        <!-- Delivery Partner -->
+        <div class="track-card" id="trackDeliveryCard">
+          <h3><i class="fas fa-motorcycle"></i> Delivery Partner</h3>
+          <div id="trackDeliveryInfo" class="track-delivery"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Order Details -->
+      <div class="track-right">
+        <!-- Order Info -->
+        <div class="track-card">
+          <h3><i class="fas fa-info-circle"></i> Order Details</h3>
+          <div id="trackOrderInfo" class="track-info-rows"></div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="track-card">
+          <h3><i class="fas fa-map-pin"></i> Delivery Address</h3>
+          <div id="trackAddress" class="track-address-card"></div>
+        </div>
+
+        <!-- Items -->
+        <div class="track-card">
+          <h3><i class="fas fa-shopping-bag"></i> Items</h3>
+          <div id="trackItems" class="track-items-list"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="track-card track-actions-card">
+          <div id="trackActions" class="track-actions"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="./js/api.js"></script>
+<script src="./js/order-tracking.js"></script>
+<button id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<script src="./js/scroll-top.js"></script>
+<div id="toast"></div>
+</body>
+</html>

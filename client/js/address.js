@@ -7,9 +7,18 @@ const saveBtn = document.getElementById("saveAddressBtn");
 const formMessage = document.getElementById("formMessage");
 
 // ─── Toast ───
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  if (t) { t.textContent = msg; t.classList.add("show"); setTimeout(function () { t.classList.remove("show"); }, 2000); }
+// Direct implementation — does NOT delegate to window.showToast
+// to avoid recursion (address.js overrides window.showToast since it loads after app.js).
+function showToast(msg, type) {
+  type = type || "info";
+  var icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+  var icon = icons[type] || "ℹ️";
+  var t = document.getElementById("toast");
+  if (!t) return;
+  t.innerHTML = icon + " " + msg;
+  t.className = "show toast-" + type;
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(function () { t.className = ""; }, 2500);
 }
 
 // ─── Show / Hide Form ───
@@ -44,7 +53,20 @@ function hideAddressForm() {
 // ─── Render Addresses ───
 async function renderAddresses() {
   if (!addressList) return;
-  addressList.innerHTML = "<p>Loading addresses...</p>";
+  // Skeleton is shown in HTML; this function will replace it when data loads
+  addressList.innerHTML =
+    '<div class="sk-addr-card">' +
+      '<div><div class="sk-line w60" style="margin-bottom:8px;"></div></div>' +
+      '<div class="sk-line w80" style="margin-bottom:6px;"></div>' +
+      '<div class="sk-line w50" style="margin-bottom:6px;"></div>' +
+      '<div class="sk-line w30"></div>' +
+    '</div>' +
+    '<div class="sk-addr-card">' +
+      '<div><div class="sk-line w60" style="margin-bottom:8px;"></div></div>' +
+      '<div class="sk-line w80" style="margin-bottom:6px;"></div>' +
+      '<div class="sk-line w50" style="margin-bottom:6px;"></div>' +
+      '<div class="sk-line w30"></div>' +
+    '</div>';
 
   const addresses = await fetchAddresses();
 
@@ -78,10 +100,19 @@ async function renderAddresses() {
   });
 }
 
+// ─── Guard: prevent concurrent saves ───
+var _saving = false;
+
 // ─── Form Submit ───
 if (addressForm) {
   addressForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    // Prevent double-submission
+    if (_saving) return;
+    _saving = true;
+    saveBtn.disabled = true;
+
     formMessage.textContent = "Saving...";
     formMessage.style.color = "#666";
 
@@ -103,15 +134,31 @@ if (addressForm) {
       if (editId) {
         await updateAddress(editId, addressData);
         showToast("Address updated");
+        hideAddressForm();
+        renderAddresses();
       } else {
-        await addAddress(addressData);
-        showToast("Address added");
+        try {
+          await addAddress(addressData);
+          showToast("Address added");
+          hideAddressForm();
+          renderAddresses();
+        } catch (err) {
+          // 409 = duplicate address detected by server
+          if (err.message && err.message.includes("already exists")) {
+            showToast("This address already exists.", "warning");
+            hideAddressForm();
+            renderAddresses();
+          } else {
+            throw err; // re-throw non-duplicate errors
+          }
+        }
       }
-      hideAddressForm();
-      renderAddresses();
     } catch (err) {
       formMessage.textContent = "Error: " + err.message;
       formMessage.style.color = "#E53935";
+    } finally {
+      _saving = false;
+      saveBtn.disabled = false;
     }
   });
 }

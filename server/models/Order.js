@@ -94,6 +94,23 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    // ─── Coupon Fields (optional) ───
+    couponCode: {
+      type: String,
+      default: null,
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    finalAmount: {
+      type: Number,
+      default: function () {
+        return this.totalAmount;
+      },
+      min: 0,
+    },
     orderedAt: {
       type: Date,
       default: Date.now,

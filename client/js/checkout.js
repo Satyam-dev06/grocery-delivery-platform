@@ -39,6 +39,9 @@ if (paymentMethodEl) {
   paymentMethodEl.addEventListener("change", togglePaymentUI);
 }
 
+// ─── Coupon State ───
+let appliedCoupon = null; // { code, discount, finalTotal }
+
 // ─── Update Order Summary ───
 function updateSummary() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -50,10 +53,83 @@ function updateSummary() {
 
   const el = function (id) { return document.getElementById(id); };
   if (el("summaryTotal")) el("summaryTotal").textContent = productTotal;
-  if (el("grandTotal")) el("grandTotal").textContent = productTotal;
+
+  // Apply coupon discount if active
+  let grandTotal = productTotal;
+  if (appliedCoupon && appliedCoupon.valid) {
+    // Recalculate discount in case cart changed
+    grandTotal = appliedCoupon.finalTotal;
+    if (el("couponDiscountRow")) el("couponDiscountRow").style.display = "block";
+    if (el("couponDiscountAmount")) el("couponDiscountAmount").textContent = appliedCoupon.discount;
+  } else {
+    if (el("couponDiscountRow")) el("couponDiscountRow").style.display = "none";
+  }
+
+  if (el("grandTotal")) el("grandTotal").textContent = grandTotal;
 }
 
-// ─── Load Saved Addresses ───
+// ─── Coupon Apply / Remove ───
+function applyCouponCode() {
+  const input = document.getElementById("couponInput");
+  const msgEl = document.getElementById("couponMessage");
+  const btn = document.getElementById("applyCouponBtn");
+  if (!input || !msgEl || !btn) return;
+
+  const code = input.value.trim().toUpperCase();
+  if (!code) {
+    msgEl.innerHTML = '<span style="color:#E53935;"><i class="fas fa-exclamation-circle"></i> Please enter a coupon code</span>';
+    return;
+  }
+
+  // Calculate cart total
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cartTotal = 0;
+  cart.forEach(function (p) {
+    const price = p.price !== undefined ? p.price : (p.product ? p.product.price : 0);
+    cartTotal += price * p.quantity;
+  });
+
+  // Show loading
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  msgEl.innerHTML = '<span style="color:#1976D2;"><i class="fas fa-spinner fa-spin"></i> Applying...</span>';
+
+  applyCouponAPI(code, cartTotal).then(function (result) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> Apply';
+
+    if (result.valid) {
+      appliedCoupon = result;
+      msgEl.innerHTML = '<span style="color:#2E7D32;font-weight:600;"><i class="fas fa-check-circle"></i> ' + result.message + '</span>';
+      // Show applied badge
+      document.getElementById("couponFormContainer").style.display = "none";
+      document.getElementById("couponAppliedContainer").style.display = "block";
+      document.getElementById("appliedCouponCode").textContent = result.coupon.code;
+      updateSummary();
+    } else {
+      appliedCoupon = null;
+      msgEl.innerHTML = '<span style="color:#E53935;"><i class="fas fa-times-circle"></i> ' + result.message + '</span>';
+      document.getElementById("couponFormContainer").style.display = "block";
+      document.getElementById("couponAppliedContainer").style.display = "none";
+    }
+  }).catch(function (e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> Apply';
+    appliedCoupon = null;
+    msgEl.innerHTML = '<span style="color:#E53935;"><i class="fas fa-exclamation-circle"></i> Error: ' + e.message + '</span>';
+  });
+}
+
+function removeCouponCode() {
+  appliedCoupon = null;
+  document.getElementById("couponFormContainer").style.display = "block";
+  document.getElementById("couponAppliedContainer").style.display = "none";
+  document.getElementById("couponMessage").innerHTML = '<span style="color:#4a5568;">Coupon removed</span>';
+  document.getElementById("couponInput").value = "";
+  updateSummary();
+}
+
+// ─── Load Saved Addresses (deduplicated) ───
 async function loadSavedAddresses() {
   const listEl = document.getElementById("savedAddressList");
   if (!listEl) return;
@@ -66,10 +142,32 @@ async function loadSavedAddresses() {
       return;
     }
 
+    // ── Deduplicate by content fields ──────────────────────
+    var seen = new Set();
+    var unique = [];
+    addresses.forEach(function (addr) {
+      var key = [
+        addr.fullName || "",
+        addr.phone || "",
+        addr.addressLine1 || "",
+        addr.addressLine2 || "",
+        addr.city || "",
+        addr.state || "",
+        addr.pincode || "",
+        addr.landmark || "",
+        addr.addressType || "",
+      ].join("||");
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(addr);
+      }
+    });
+    // ────────────────────────────────────────────────────────
+
     listEl.innerHTML = "";
     let defaultSelected = false;
 
-    addresses.forEach(function (addr) {
+    unique.forEach(function (addr) {
       const isDefault = addr.isDefault;
       const checked = isDefault ? "checked" : "";
       const typeIcon = { Home: "\u{1F3E0}", Work: "\u{1F4BC}", Other: "\u{1F4CD}" };
@@ -109,8 +207,8 @@ async function loadSavedAddresses() {
       }
     });
 
-    // If no default was set, select the first address
-    if (!defaultSelected && addresses.length > 0) {
+    // If no default was set, select the first unique address
+    if (!defaultSelected && unique.length > 0) {
       var firstRadio = document.querySelector("input[name='savedAddress']");
       if (firstRadio) firstRadio.checked = true;
     }
@@ -118,9 +216,7 @@ async function loadSavedAddresses() {
     listEl.innerHTML =
       '<p style="color:#E53935;padding:20px;">Could not load addresses.</p>';
   }
-}
-
-// ─── Page Load ───
+}  // ─── Page Load ───
 (async function loadCheckout() {
   if (isLoggedIn()) {
     try {
@@ -139,6 +235,25 @@ async function loadSavedAddresses() {
   }
   updateSummary();
   togglePaymentUI(); // Show initial payment UI based on default selection
+
+  // ─── Coupon Event Listeners ───
+  var applyBtn = document.getElementById("applyCouponBtn");
+  if (applyBtn) {
+    applyBtn.addEventListener("click", applyCouponCode);
+  }
+  var couponInput = document.getElementById("couponInput");
+  if (couponInput) {
+    couponInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        applyCouponCode();
+      }
+    });
+  }
+  var removeBtn = document.getElementById("removeCouponBtn");
+  if (removeBtn) {
+    removeBtn.addEventListener("click", removeCouponCode);
+  }
 })();
 
 // ─── Place Order ───
@@ -147,8 +262,12 @@ form.addEventListener("submit", async function (event) {
 
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   if (cart.length === 0) {
-    alert("Your cart is empty!");
-    window.location.href = "index.html";
+    if (typeof window.showToast === "function") {
+      window.showToast("Your cart is empty! Redirecting to shop...", "warning");
+    } else {
+      alert("Your cart is empty!");
+    }
+    setTimeout(function () { window.location.href = "index.html"; }, 1500);
     return;
   }
 
@@ -176,8 +295,10 @@ form.addEventListener("submit", async function (event) {
   }
 
   try {
-    // Step 1: Create the order (paymentStatus = Pending for all methods)
-    const order = await placeOrderAPI(addressId, paymentMethod);
+    // Step 1: Create the order with optional coupon data
+    var couponCode = appliedCoupon && appliedCoupon.valid ? appliedCoupon.coupon.code : null;
+    var discountAmount = appliedCoupon && appliedCoupon.valid ? appliedCoupon.discount : 0;
+    const order = await placeOrderAPI(addressId, paymentMethod, couponCode, discountAmount);
     localStorage.removeItem("cart");
 
     // Step 2: Handle based on payment method

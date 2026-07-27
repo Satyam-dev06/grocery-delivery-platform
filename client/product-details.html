@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Product Details | GroceryHub</title>
+  <meta name="description" id="metaDescription" content="View product details on GroceryHub">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<header role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="logo" onclick="window.location.href='index.html'">&#x1F6D2; GroceryHub</div>
+    <div class="nav-actions">
+      <button class="nav-link-btn" onclick="window.location.href='wishlist.html'"><i class="fa-solid fa-heart"></i> Wishlist</button>
+      <button class="cart-btn" onclick="window.location.href='cart.html'"><i class="fa-solid fa-cart-shopping"></i> Cart <span id="cartCount">0</span></button>
+      <button class="login-btn" onclick="handleLoginClick()"><i class="fa-solid fa-user"></i> Login</button>
+    </div>
+  </nav>
+</header>
+<main id="main-content" role="main">
+  <div id="productLoading" class="loading-spinner" style="display:block;">
+    <div class="spinner-anim"></div>
+    <span class="spinner-text">Loading product details...</span>
+  </div>
+  <div id="productError" class="empty-search" style="display:none;">
+    <i class="fas fa-exclamation-circle" style="font-size:64px;color:#E53935;margin-bottom:20px;"></i>
+    <h3>Product Not Found</h3>
+    <p id="errorMessage">The product you are looking for does not exist or has been removed.</p>
+    <button class="shop-btn" onclick="window.location.href='index.html'" style="margin-top:20px;"><i class="fas fa-arrow-left"></i> Back to Shop</button>
+  </div>
+  <div id="productContent" class="product-details-page" style="display:none;">
+    <nav class="pd-breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <span class="pd-breadcrumb-sep"><i class="fas fa-chevron-right"></i></span>
+      <a href="index.html" id="breadcrumbCategory">Products</a>
+      <span class="pd-breadcrumb-sep"><i class="fas fa-chevron-right"></i></span>
+      <span id="breadcrumbName">Product</span>
+    </nav>
+    <div class="pd-layout">
+      <div class="pd-gallery">
+        <div class="pd-main-image-container">
+          <div class="pd-discount-badge" id="pdDiscountBadge" style="display:none;"></div>
+          <button class="pd-wishlist-btn" id="pdWishlistBtn" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+          <img id="pdMainImage" src="" alt="Product Image" class="pd-main-image">
+        </div>
+        <div class="pd-thumbnails" id="pdThumbnails"></div>
+      </div>
+      <div class="pd-info">
+        <div class="pd-meta">
+          <span class="pd-brand" id="pdBrand"></span>
+          <span class="pd-category" id="pdCategory"></span>
+        </div>
+        <h1 class="pd-title" id="pdTitle"></h1>
+        <div class="pd-rating-row">
+          <div class="pd-stars" id="pdStars"></div>
+          <span class="pd-review-count" id="pdReviewCount">(0 reviews)</span>
+        </div>
+        <div class="pd-price-row">
+          <span class="pd-current-price" id="pdCurrentPrice"></span>
+          <span class="pd-old-price" id="pdOldPrice"></span>
+          <span class="pd-discount-text" id="pdDiscountText" style="display:none;"></span>
+        </div>
+        <div class="pd-stock-row">
+          <span id="pdStockStatus"><i class="fas fa-check-circle"></i> In Stock</span>
+        </div>
+        <p class="pd-description" id="pdDescription"></p>
+        <div class="pd-actions">
+          <div class="pd-quantity">
+            <button class="pd-qty-btn" onclick="changeQty(-1)" aria-label="Decrease quantity">&minus;</button>
+            <span class="pd-qty-value" id="pdQty">1</span>
+            <button class="pd-qty-btn" onclick="changeQty(1)" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="shop-btn pd-add-cart ripple-btn" onclick="pdAddToCart()"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+          <button class="shop-btn-outline pd-buy-now ripple-btn" onclick="pdBuyNow()"><i class="fas fa-bolt"></i> Buy Now</button>
+          <button class="pd-share-btn" onclick="pdShare()" aria-label="Share product"><i class="fas fa-share-alt"></i></button>
+        </div>
+        <div class="pd-delivery-info">
+          <div class="pd-delivery-item"><i class="fas fa-truck"></i><div><strong>Estimated Delivery</strong><span>Delivery in <span id="pdDeliveryTime">30</span> minutes</span></div></div>
+          <div class="pd-delivery-item"><i class="fas fa-shield-alt"></i><div><strong>Freshness Guarantee</strong><span>100% fresh products guaranteed</span></div></div>
+          <div class="pd-delivery-item"><i class="fas fa-undo-alt"></i><div><strong>Easy Returns</strong><span>Return within 24 hours if not satisfied</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pd-offers-section" id="pdOffersSection" style="display:none;">
+      <h3><i class="fas fa-tags"></i> Available Offers</h3>
+      <div class="pd-offers-list" id="pdOffersList"></div>
+    </div>
+    <section class="pd-related-section">
+      <h2>Related Products</h2>
+      <div class="product-container" id="relatedContainer">
+        <div class="loading-spinner" style="padding:40px;"><div class="spinner-anim" style="width:30px;height:30px;border-width:3px;"></div></div>
+      </div>
+    </section>
+    <section class="pd-reviews-section">
+      <h2>Customer Reviews</h2>
+      <div id="reviewsContainer"></div>
+    </section>
+  </div>
+</main>
+<footer role="contentinfo">
+  <div class="footer-container">
+    <div class="footer-column"><h3>GroceryHub</h3><p>Fresh groceries delivered to your doorstep in just 30 minutes.</p></div>
+    <div class="footer-column"><h3>Quick Links</h3><a href="index.html">Home</a><a href="cart.html">Cart</a><a href="orders.html">Orders</a><a href="wishlist.html">Wishlist</a></div>
+    <div class="footer-column"><h3>Support</h3><a href="#">FAQs</a><a href="#">Help Center</a><a href="#">Returns</a><a href="#">Shipping</a></div>
+    <div class="footer-column"><h3>Contact</h3><p>&#x260E; +91 9876543210</p><p>&#x2709; support@groceryhub.com</p><p>&#x1F4CD; Jalandhar, Punjab</p></div>
+  </div>
+  <div class="footer-bottom">&copy; 2026 GroceryHub | All Rights Reserved</div>
+</footer>
+<script src="./js/api.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/product-details.js"></script>
+<button id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<script src="./js/scroll-top.js"></script>
+<div id="toast"></div>
+</body>
+</html>

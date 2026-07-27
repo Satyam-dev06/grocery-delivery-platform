@@ -4,12 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Details - GroceryHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<header>
-  <nav class="navbar">
+<header role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="logo">GroceryHub</div>
     <div class="nav-actions">
       <button onclick="window.location.href='orders.html'">My Orders</button>
@@ -18,17 +22,16 @@
   </nav>
 </header>
 
-<main>
+<main id="main-content" role="main">
   <section class="order-details-page" id="orderDetailsPage">
   </section>
 </main>
 
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
-</style>
-
-<script src="./js/api.js"></script>
+</style><script src="./js/api.js"></script>
 <script src="./js/order-details.js"></script>
-
+<button id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<script src="./js/scroll-top.js"></script>
 </body>
 </html>

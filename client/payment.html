@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Processing Payment - GroceryHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
   <style>
     .payment-proc {
@@ -20,15 +23,16 @@
   </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<header>
-  <nav class="navbar">
+<header role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="logo">GroceryHub</div>
     <button onclick="window.location.href='index.html'"> Home</button>
   </nav>
 </header>
 
-<main>
+<main id="main-content" role="main">
   <section class="payment-proc" id="paymentPage">
     <div style="font-size:60px;margin-bottom:20px;">
       <span id="methodIcon"></span>
@@ -78,10 +82,9 @@
 }
 .pay-input:focus { border-color:#2E7D32; box-shadow:0 0 0 3px rgba(46,125,50,.15); }
 @keyframes spin { to { transform: rotate(360deg); } }
-</style>
-
-<script src="./js/api.js"></script>
+</style><script src="./js/api.js"></script>
 <script src="./js/payment.js"></script>
-
+<button id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<script src="./js/scroll-top.js"></script>
 </body>
 </html>

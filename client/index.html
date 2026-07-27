@@ -5,72 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grocery Delivery Platform</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 
 </head>
 <body>
-  
-      <header>
-    <nav class="navbar">
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header role="banner">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="navbar-inner">
         <div class="logo">
             🛒 GroceryHub
         </div>
 
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#categories">Categories</a></li>
-            <li><a href="#offers">Offers</a></li>
+            <li><a href="#hero" onclick="scrollToSection('hero');return false;">Home</a></li>
+            <li><a href="#categories" onclick="scrollToSection('categories');return false;">Categories</a></li>
+            <li><a href="#offers" onclick="scrollToSection('offers');filterOffers();return false;">Offers</a></li>
             <li><a href="orders.html">Orders</a></li>
         </ul>
-       <div class="search-box">
 
-    <i class="fa-solid fa-magnifying-glass"></i>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <label for="searchInput" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">Search groceries</label>
+          <input type="text" id="searchInput" placeholder="Search groceries...">
+        </div>
 
-    <input
-        type="text"
-        id="searchInput"
-        placeholder="Search groceries..."
-    >
+        <div class="nav-actions">
+          <div class="points-box">
+            ⭐ <span id="userPoints">0</span> Points
+          </div>
 
-</div>
+          <button class="nav-link-btn" onclick="window.location.href='wishlist.html'"><i class="fa-solid fa-heart"></i> Wishlist</button>
 
-<div class="nav-actions">
+          <button class="cart-btn" onclick="window.location.href='cart.html'">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Cart
+            <span id="cartCount">0</span>
+          </button>
 
-    <div class="points-box">
+          <div class="notif-bell" onclick="toggleNotifDropdown()" role="button" tabindex="0" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+            <div class="notif-dropdown" id="notifDropdown">
+              <div class="dd-empty"><i class="fa-regular fa-bell-slash"></i> Loading...</div>
+              <a href="notifications.html" class="dd-view-all">View All</a>
+            </div>
+          </div>
 
-        ⭐ <span id="userPoints">0</span> Points
-
-    </div>
-
-    <button onclick="window.location.href='wishlist.html'">❤️ Wishlist </button>
-
-    <button
-        class="cart-btn"
-        onclick="window.location.href='cart.html'">
-
-        <i class="fa-solid fa-cart-shopping"></i>
-
-        Cart
-
-        <span id="cartCount">0</span>
-
-    </button>
-
-    <button class="login-btn">
-
-        <i class="fa-solid fa-user"></i>
-
-        Login
-
-    </button>
-
-</div>
+          <button class="login-btn" onclick="handleLoginClick()">
+            <i class="fa-solid fa-user"></i>
+            Login
+          </button>
+        </div>
+      </div>
     </nav>
 </header>
-<main>
+<main id="main-content" role="main">
 
-   <section class="hero">
+   <section class="hero" id="hero">
 
     <div class="hero-content">
 
@@ -87,9 +84,9 @@
 
         <div class="hero-buttons">
 
-            <button class="shop-btn"onclick="document.querySelector('.featured-products').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+            <button class="shop-btn ripple-btn" onclick="scrollToSection('featured-products')">Shop Now</button>
             
-            <button class="category-btn">Explore Categories</button>
+            <button class="category-btn ripple-btn" onclick="scrollToSection('categories')">Explore Categories</button>
 
         </div>
 
@@ -159,33 +156,33 @@
 
     <div class="offers-container">
 
-        <div class="offer-card offer-one">
+        <div class="offer-card offer-one ripple-btn" onclick="filterCategory('Fruits')">
 
             <h3>Weekend Sale</h3>
 
             <p>Up to <strong>40% OFF</strong> on Fresh Fruits</p>
 
-            <button>Shop Now →</button>
+            <button onclick="event.stopPropagation();filterCategory('Fruits')">Shop Now →</button>
 
         </div>
 
-        <div class="offer-card offer-two">
+        <div class="offer-card offer-two ripple-btn" onclick="filterCategory('Dairy')">
 
             <h3>Dairy Special</h3>
 
             <p>Buy 2 Get 1 Free on Dairy Products</p>
 
-            <button>Explore →</button>
+            <button onclick="event.stopPropagation();filterCategory('Dairy')">Explore →</button>
 
         </div>
 
-        <div class="offer-card offer-three">
+        <div class="offer-card offer-three ripple-btn" onclick="filterOffers()">
 
             <h3>Fresh Vegetables</h3>
 
             <p>Flat ₹100 OFF on orders above ₹999</p>
 
-            <button>Order Now →</button>
+            <button onclick="event.stopPropagation();filterOffers()">Order Now →</button>
 
         </div>
 
@@ -193,48 +190,48 @@
 
 </section>
 
-   <section class="categories">
+   <section class="categories" id="categories">
 
     <h2>Shop By Category</h2>
 
     <div class="category-container">
 
-        <div class="category-card" onclick="filterCategory('all')">
+        <div class="category-card ripple-btn" onclick="filterCategory('all')">
+            <span class="cat-icon">🛒</span>
             <h3>All Products</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Vegetables')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Vegetables')">
+            <span class="cat-icon">🥬</span>
             <h3>Vegetables</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Fruits')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Fruits')">
+            <span class="cat-icon">🍎</span>
             <h3>Fruits</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Dairy')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Dairy')">
+            <span class="cat-icon">🥛</span>
             <h3>Dairy</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Bakery')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Bakery')">
+            <span class="cat-icon">🥖</span>
             <h3>Bakery</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Beverages')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Beverages')">
+            <span class="cat-icon">🧃</span>
             <h3>Beverages</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Meat')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Meat')">
+            <span class="cat-icon">🥩</span>
             <h3>Meat</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Grains')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Grains')">
+            <span class="cat-icon">🌾</span>
             <h3>Grains</h3>
         </div>
-
-        <div class="category-card" onclick="filterCategory('Personal Care')">
+        <div class="category-card ripple-btn" onclick="filterCategory('Personal Care')">
+            <span class="cat-icon">🧴</span>
             <h3>Personal Care</h3>
         </div>
-
     </div>
 
 </section>
@@ -330,7 +327,7 @@
     </div>
 </div>
 
-<section class="featured-products">
+<section class="featured-products" id="featured-products">
 
     <h2>Featured Products</h2>
 
@@ -543,9 +540,11 @@
 
             <input
                 type="email"
-                placeholder="Enter your email">
+                id="newsletterEmail"
+                placeholder="Enter your email"
+                aria-label="Enter your email to subscribe">
 
-            <button>
+            <button onclick="subscribeNewsletter()">
 
                 Subscribe
 
@@ -557,90 +556,51 @@
 
 </section>
 
-<footer>
-
-    <div class="footer-container">
-
-        <div class="footer-column">
-
-            <h3>GroceryHub</h3>
-
-            <p>
-                Fresh groceries delivered to your doorstep in just
-                30 minutes.
-            </p>
-
-        </div>
-
-        <div class="footer-column">
-
-            <h3>Company</h3>
-
-            <a href="#">About Us</a>
-            <a href="#">Careers</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms & Conditions</a>
-
-        </div>
-
-        <div class="footer-column">
-
-            <h3>Support</h3>
-
-            <a href="#">FAQs</a>
-            <a href="#">Help Center</a>
-            <a href="#">Returns</a>
-            <a href="#">Shipping</a>
-
-        </div>
-
-        <div class="footer-column">
-
-            <h3>Contact</h3>
-
-            <p>📞 +91 9876543210</p>
-            <p>✉ support@groceryhub.com</p>
-            <p>📍 Jalandhar, Punjab</p>
-
-        </div>
-         <div class="footer-column">
-
-    <h3>Follow Us</h3>
-
-    <a href="https://facebook.com" target="_blank">
-        <i class="fa-brands fa-facebook"></i> Facebook
-    </a>
-
-    <a href="https://instagram.com" target="_blank">
-        <i class="fa-brands fa-instagram"></i> Instagram
-    </a>
-
-    <a href="https://linkedin.com" target="_blank">
-        <i class="fa-brands fa-linkedin"></i> LinkedIn
-    </a>
-
-    <a href="https://twitter.com" target="_blank">
-        <i class="fa-brands fa-x-twitter"></i> Twitter (X)
-    </a>
-
-    </div>
-    </div>
-
-    <div class="footer-bottom">
-
-        © 2026 GroceryHub | All Rights Reserved
-
-    </div>
-
-</footer>
-
 </main>
+
+<footer role="contentinfo">
+  <div class="footer-container">
+    <div class="footer-column">
+      <h3>GroceryHub</h3>
+      <p>Fresh groceries delivered to your doorstep in just 30 minutes.</p>
+    </div>
+    <div class="footer-column">
+      <h3>Company</h3>
+      <a href="#">About Us</a>
+      <a href="#">Careers</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & Conditions</a>
+    </div>
+    <div class="footer-column">
+      <h3>Support</h3>
+      <a href="#">FAQs</a>
+      <a href="#">Help Center</a>
+      <a href="#">Returns</a>
+      <a href="#">Shipping</a>
+    </div>
+    <div class="footer-column">
+      <h3>Contact</h3>
+      <p>📞 +91 9876543210</p>
+      <p>✉ support@groceryhub.com</p>
+      <p>📍 Jalandhar, Punjab</p>
+    </div>
+    <div class="footer-column">
+      <h3>Follow Us</h3>
+      <a href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i> Facebook</a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i> Instagram</a>
+      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+      <a href="https://twitter.com" target="_blank" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i> Twitter (X)</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 GroceryHub | All Rights Reserved</div>
+</footer>
 
 <script src="./js/api.js"></script>
 <script src="./js/products.js"></script>
 <script src="./js/app.js"></script>
 <script src="./js/newsletter.js"></script>
 <script src="./js/counter.js"></script>
+<script src="./js/notifications.js"></script>
 
 <div id="toast">
 

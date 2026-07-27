@@ -1,5 +1,6 @@
 const Payment = require("../models/Payment");
 const Order = require("../models/Order");
+const { notifyPayment, notifyAdmin } = require("../utils/notificationHelper");
 
 // ─────────────────────────────────────────────────────────
 // @desc    Create a payment for an existing order
@@ -74,6 +75,8 @@ const createPayment = async (req, res) => {
     order.paymentStatus = "Paid";
     await order.save();
 
+    notifyPayment(req.user._id, 'Paid', order.totalAmount).catch(function(e){});
+    notifyAdmin('payment_completed', { orderId: order._id.toString(), amount: order.totalAmount }).catch(function(e){});
     res.status(201).json({
       message: "Payment successful",
       payment: {

@@ -2,6 +2,8 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const Product = require("./models/Product");
+const User = require("./models/User");
+const Coupon = require("./models/Coupon");
 
 const products = [
   { name: "Fresh Milk", price: 65, oldPrice: 80, image: "./images/milk.png", category: "Dairy", brand: "Mother Dairy", description: "Fresh full-cream milk sourced from local farms.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
@@ -30,14 +32,69 @@ const products = [
   { name: "Shampoo (200ml)", price: 180, oldPrice: 240, image: "./images/shampoo.svg", category: "Personal Care", brand: "Nestlé", description: "Nourishing shampoo for silky smooth hair.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
 ];
 
+// ─── Demo Customers ───
+const demoCustomers = [
+  { name: "Satyam", email: "satyam@example.com", password: "user123", role: "user" },
+  { name: "Rahul",  email: "rahul@example.com",  password: "user123", role: "user" },
+  { name: "Priya",  email: "priya@example.com",  password: "user123", role: "user" },
+];
+
+// ─── Coupons ───
+const coupons = [
+  { code: "WELCOME10", description: "10% off on your first order!", discountType: "percentage", discountValue: 10, minimumOrder: 100, maxDiscount: 100, expiryDate: new Date("2026-12-31"), usageLimit: 0, isActive: true },
+  { code: "FLAT50",    description: "Flat ₹50 off on orders above ₹250.", discountType: "fixed",      discountValue: 50, minimumOrder: 250, maxDiscount: 0,    expiryDate: new Date("2026-12-31"), usageLimit: 0, isActive: true },
+  { code: "FESTIVE20", description: "20% off festive special! Up to ₹150 off.", discountType: "percentage", discountValue: 20, minimumOrder: 500, maxDiscount: 150, expiryDate: new Date("2026-12-31"), usageLimit: 100, isActive: true },
+];
+
 const seed = async () => {
   try {
     await connectDB();
+
+    // ─── Users ──────────────────────────────────────────
+    await User.deleteMany({});
+    console.log("Cleared existing users");
+
+    // Create admin (password is auto-hashed by the User model's pre("save") hook)
+    await User.create({
+      name: "Admin",
+      email: "admin@groceryhub.com",
+      password: "admin123",
+      role: "admin",
+    });
+    console.log("✓ Admin created");
+
+    // Create demo customers — plain-text password gets hashed by pre("save") hook
+    const createdCustomers = [];
+    for (const c of demoCustomers) {
+      const existing = await User.findOne({ email: c.email });
+      if (!existing) {
+        const user = await User.create(c);
+        createdCustomers.push(user);
+      }
+    }
+    console.log(`✓ ${createdCustomers.length} mock customers created`);
+
+    // ─── Products ───────────────────────────────────────
     await Product.deleteMany({});
     console.log("Cleared existing products");
+
     await Product.createIndexes();
-    const created = await Product.insertMany(products);
-    console.log("Inserted " + created.length + " products with brands, descriptions and indexes");
+    const createdProducts = await Product.insertMany(products);
+    console.log(`✓ ${createdProducts.length} products seeded`);
+
+    // ─── Coupons ────────────────────────────────────────
+    await Coupon.deleteMany({});
+    console.log("Cleared existing coupons");
+
+    const createdCoupons = await Coupon.insertMany(coupons);
+    console.log(`✓ ${createdCoupons.length} coupons seeded`);
+
+    // ─── Summary ────────────────────────────────────────
+    console.log("\n─── Seed Complete ───");
+    console.log(`  Users:   1 admin + ${createdCustomers.length} customers`);
+    console.log(`  Products: ${createdProducts.length}`);
+    console.log(`  Coupons:  ${createdCoupons.length}`);
+
     process.exit(0);
   } catch (error) {
     console.error("Seed failed:", error.message);

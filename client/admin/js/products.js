@@ -15,6 +15,19 @@ async function loadProducts() {
   var content = document.getElementById("productsContent");
   content.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:#2E7D32;"></i><p style="margin-top:15px;color:#888;">Loading products...</p></div>';
 
+  // ── Timeout guard: if the request takes >10s, force a timeout ──
+  var timedOut = false;
+  var timeoutId = setTimeout(function () {
+    timedOut = true;
+    content.innerHTML = '<div class="empty-state">' +
+      '<div class="empty-icon"><i class="fas fa-clock" style="color:#E65100;font-size:48px;"></i></div>' +
+      '<h3>Request timed out</h3>' +
+      '<p>The server took too long to respond. Please check your connection or try again.</p>' +
+      '<button class="btn btn-primary" onclick="currentPage=1;loadProducts()" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Retry</button>' +
+    '</div>';
+    isLoading = false;
+  }, 10000);
+
   try {
     var opts = {
       page: currentPage,
@@ -26,15 +39,29 @@ async function loadProducts() {
     if (currentBrand) opts.brand = currentBrand;
 
     var data = await fetchProducts(opts);
+
+    // If we already timed out, bail out
+    if (timedOut) return;
+
     currentProducts = data.products || [];
     var pagination = data.pagination || {};
     totalPages = pagination.totalPages || 1;
 
     renderProducts(pagination);
   } catch (e) {
-    content.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fas fa-exclamation-circle" style="color:#C62828;"></i></div><p>Error: '+e.message+'</p></div>';
+    if (timedOut) return;
+    content.innerHTML = '<div class="empty-state">' +
+      '<div class="empty-icon"><i class="fas fa-exclamation-circle" style="color:#C62828;font-size:48px;"></i></div>' +
+      '<h3>Unable to load products</h3>' +
+      '<p>' + e.message.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>' +
+      '<button class="btn btn-primary" onclick="currentPage=1;loadProducts()" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Retry</button>' +
+      '<button class="btn btn-outline" onclick="console.clear()" style="margin-left:10px;margin-top:15px;"><i class="fas fa-terminal"></i> Clear Console</button>' +
+    '</div>';
+    console.error("[Admin Products] Failed to load:", e);
+  } finally {
+    clearTimeout(timeoutId);
+    isLoading = false;
   }
-  isLoading = false;
 }
 
 function renderProducts(pagination) {
@@ -110,10 +137,108 @@ function renderProducts(pagination) {
   document.getElementById("productsContent").innerHTML = html;
 }
 
+// ─── Init: load products on page mount ───
+function initAdminProducts() { loadProducts(); }
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAdminProducts);
+} else {
+  initAdminProducts();
+}
+
 function openProductModal() {
   document.getElementById("editProductId").value = "";
   document.getElementById("productModalTitle").innerHTML = '<i class="fas fa-boxes"></i> Add Product';
   document.getElementById("productSaveBtn").innerHTML = '<i class="fas fa-check"></i> Save';
   document.getElementById("prodName").value = "";
   document.getElementById("prodCategory").value = "";
-  docu
+  document.getElementById("prodBrand").value = "";
+  document.getElementById("prodDescription").value = "";
+  document.getElementById("prodPrice").value = "";
+  document.getElementById("prodOldPrice").value = "";
+  document.getElementById("prodImage").value = "";
+  document.getElementById("prodRating").value = "5";
+  document.getElementById("prodStock").checked = true;
+  document.getElementById("prodFeatured").checked = false;
+  document.getElementById("prodTrending").checked = false;
+  document.getElementById("prodRecommended").checked = false;
+  document.getElementById("productModal").style.display = "flex";
+  document.getElementById("prodName").focus();
+}
+
+function closeProductModal() {
+  document.getElementById("productModal").style.display = "none";
+}
+
+async function editProduct(id) {
+  try {
+    var product = await fetchProductById(id);
+    document.getElementById("editProductId").value = id;
+    document.getElementById("productModalTitle").innerHTML = '<i class="fas fa-pen"></i> Edit Product';
+    document.getElementById("productSaveBtn").innerHTML = '<i class="fas fa-save"></i> Update';
+    document.getElementById("prodName").value = product.name || "";
+    document.getElementById("prodCategory").value = product.category || "";
+    document.getElementById("prodBrand").value = product.brand || "";
+    document.getElementById("prodDescription").value = product.description || "";
+    document.getElementById("prodPrice").value = product.price || "";
+    document.getElementById("prodOldPrice").value = product.oldPrice || "";
+    document.getElementById("prodImage").value = product.image || "";
+    document.getElementById("prodRating").value = product.rating || "5";
+    document.getElementById("prodStock").checked = product.stock !== false;
+    document.getElementById("prodFeatured").checked = product.featured === true;
+    document.getElementById("prodTrending").checked = product.trending === true;
+    document.getElementById("prodRecommended").checked = product.recommended === true;
+    document.getElementById("productModal").style.display = "flex";
+    document.getElementById("prodName").focus();
+  } catch (e) {
+    alert("Failed to load product: " + e.message);
+  }
+}
+
+async function saveProduct(event) {
+  event.preventDefault();
+  var id = document.getElementById("editProductId").value;
+  var data = {
+    name: document.getElementById("prodName").value.trim(),
+    category: document.getElementById("prodCategory").value.trim(),
+    brand: document.getElementById("prodBrand").value.trim(),
+    description: document.getElementById("prodDescription").value.trim(),
+    price: parseFloat(document.getElementById("prodPrice").value) || 0,
+    oldPrice: parseFloat(document.getElementById("prodOldPrice").value) || 0,
+    image: document.getElementById("prodImage").value.trim(),
+    rating: parseFloat(document.getElementById("prodRating").value) || 5,
+    stock: document.getElementById("prodStock").checked,
+    featured: document.getElementById("prodFeatured").checked,
+    trending: document.getElementById("prodTrending").checked,
+    recommended: document.getElementById("prodRecommended").checked,
+  };
+
+  var saveBtn = document.getElementById("productSaveBtn");
+  var originalText = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  saveBtn.disabled = true;
+
+  try {
+    if (id) {
+      await apiRequest("/products/" + id, { method: "PUT", body: JSON.stringify(data) });
+    } else {
+      await apiRequest("/products", { method: "POST", body: JSON.stringify(data) });
+    }
+    closeProductModal();
+    loadProducts();
+  } catch (e) {
+    alert("Failed to save product: " + e.message);
+  } finally {
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+  try {
+    await apiRequest("/products/" + id, { method: "DELETE" });
+    loadProducts();
+  } catch (e) {
+    alert("Failed to delete product: " + e.message);
+  }
+}

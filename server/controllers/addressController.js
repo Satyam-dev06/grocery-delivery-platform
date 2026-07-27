@@ -1,6 +1,6 @@
 const Address = require("../models/Address");
 
-// @desc    Add new address
+// @desc    Add new address (with duplicate detection)
 // @route   POST /api/address
 // @access  Private
 const addAddress = async (req, res) => {
@@ -17,6 +17,42 @@ const addAddress = async (req, res) => {
       addressType,
       isDefault,
     } = req.body;
+
+    // ── Duplicate check ────────────────────────────────────────
+    // Before inserting, look for an exact match across all address
+    // fields for this user.  Exclude isDefault from the match so
+    // that marking a different address as default after a save
+    // doesn't create a duplicate on the next save.
+    const existing = await Address.findOne({
+      user: req.user._id,
+      fullName: fullName ? fullName.trim() : "",
+      phone: phone ? phone.trim() : "",
+      addressLine1: addressLine1 ? addressLine1.trim() : "",
+      addressLine2: addressLine2 ? addressLine2.trim() : "",
+      city: city ? city.trim() : "",
+      state: state ? state.trim() : "",
+      pincode: pincode ? pincode.trim() : "",
+      landmark: landmark ? landmark.trim() : "",
+      addressType: addressType || "Home",
+    });
+
+    if (existing) {
+      // If the existing address is identical except for isDefault,
+      // just toggle the default flag if needed and return.
+      if (isDefault && !existing.isDefault) {
+        await Address.updateMany(
+          { user: req.user._id },
+          { isDefault: false }
+        );
+        existing.isDefault = true;
+        await existing.save();
+      }
+      return res.status(409).json({
+        message: "This address already exists.",
+        address: existing,
+      });
+    }
+    // ── End duplicate check ────────────────────────────────────
 
     // If this address is set as default, remove default from all other addresses
     if (isDefault) {

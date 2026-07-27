@@ -45,8 +45,14 @@ async function cancelOrder(orderId) {
 }
 
 // ─── Toast ───
-function showToast(msg) {
-  let toast = document.getElementById("orderToast");
+function showToast(msg, type) {
+  type = type || "info";
+  if (typeof window.showToast === "function") {
+    window.showToast(msg, type);
+    return;
+  }
+  // Fallback: create a temporary toast element
+  var toast = document.getElementById("orderToast");
   if (!toast) {
     toast = document.createElement("div");
     toast.id = "orderToast";
@@ -139,7 +145,7 @@ async function loadOrders() {
         "</span>\n" +
         "        </div>\n" +
         '        <div class="order-card-actions">\n' +
-        '          <button class="view-btn" onclick="window.location.href=\'order-details.html?id=' +
+        '          <button class="view-btn" onclick="window.location.href=\'order-tracking.html?id=' +
         order._id +
         '\'">👁️ View Details</button>\n' +
         (cancellable

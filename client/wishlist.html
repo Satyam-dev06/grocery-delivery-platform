@@ -10,17 +10,20 @@
 
     <title>Wishlist</title>
 
-    <link rel="stylesheet"
-          href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
 
 
 </head>
 
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<header>
+<header role="banner">
 
-<nav class="navbar">
+<nav class="navbar" role="navigation" aria-label="Main navigation">
 
 <div class="logo">
 
@@ -43,11 +46,11 @@ onclick="window.location.href='index.html'">
 
 </header>
 
-<main>
+<main id="main-content" role="main">
 
-<section class="cart-page">
+<section class="wishlist-page">
 
-<h2>❤️ My Wishlist</h2>
+<h2><i class="fa-solid fa-heart" style="color:var(--danger);"></i> My Wishlist</h2>
 
 <div
 class="product-container"
@@ -62,7 +65,8 @@ id="wishlistContainer">
 <script src="./js/api.js"></script>
 <script src="./js/products.js"></script>
 <script src="./js/wishlist.js"></script>
-
+<button id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<script src="./js/scroll-top.js"></script>
 </body>
 
 </html>
