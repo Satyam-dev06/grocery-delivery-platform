@@ -1,0 +1,9 @@
+# GroceryHub — Netlify Configuration
+
+[build]
+  publish = "client"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,4 +1,15 @@
-const API_BASE = "https://grocery-delivery-platform-5o0b.onrender.com/api";
+// ─── Environment Detection ───
+// Detect if running locally (localhost) or deployed (Netlify)
+function getApiBaseUrl() {
+  var host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") {
+    return "http://localhost:5000/api";
+  }
+  // Deployed on Netlify — use Render backend
+  return "https://grocery-delivery-platform-5o0b.onrender.com/api";
+}
+
+const API_BASE = getApiBaseUrl();
 
 function getToken() {
   return localStorage.getItem("token");
