@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
+const mongoose = require("mongoose");
 const { notifyOrderStatus, notifyAdmin } = require("../utils/notificationHelper");
 const Address = require("../models/Address");
 
@@ -146,6 +147,9 @@ const getMyOrders = async (req, res) => {
 // ─────────────────────────────────────────────────────────
 const getOrderById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -162,9 +166,6 @@ const getOrderById = async (req, res) => {
 
     res.json(order);
   } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid order ID" });
-    }
     res.status(500).json({ message: error.message });
   }
 };
@@ -180,6 +181,9 @@ const getOrderById = async (req, res) => {
 // ─────────────────────────────────────────────────────────
 const cancelOrder = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -207,9 +211,6 @@ const cancelOrder = async (req, res) => {
 
     res.json({ message: "Order cancelled successfully", order: updated });
   } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid order ID" });
-    }
     res.status(500).json({ message: error.message });
   }
 };
@@ -221,6 +222,10 @@ const cancelOrder = async (req, res) => {
 // ─────────────────────────────────────────────────────────
 const updateOrderStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
+
     const { orderStatus } = req.body;
 
     const validStatuses = ["Pending", "Confirmed", "Packed", "Out for Delivery", "Delivered", "Cancelled"];
@@ -248,9 +253,6 @@ const updateOrderStatus = async (req, res) => {
 
     res.json({ message: "Order status updated", order: updated });
   } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid order ID" });
-    }
     res.status(500).json({ message: error.message });
   }
 };

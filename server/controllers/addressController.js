@@ -1,4 +1,5 @@
 const Address = require("../models/Address");
+const mongoose = require("mongoose");
 
 // @desc    Add new address (with duplicate detection)
 // @route   POST /api/address
@@ -101,6 +102,9 @@ const getAddresses = async (req, res) => {
 // @access  Private
 const getAddressById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid address ID" });
+    }
     const address = await Address.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -121,6 +125,9 @@ const getAddressById = async (req, res) => {
 // @access  Private
 const updateAddress = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid address ID" });
+    }
     const address = await Address.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -175,6 +182,9 @@ const updateAddress = async (req, res) => {
 // @access  Private
 const deleteAddress = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid address ID" });
+    }
     const address = await Address.findOneAndDelete({
       _id: req.params.id,
       user: req.user._id,
@@ -195,6 +205,9 @@ const deleteAddress = async (req, res) => {
 // @access  Private
 const setDefaultAddress = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid address ID" });
+    }
     const address = await Address.findOne({
       _id: req.params.id,
       user: req.user._id,
