@@ -67,8 +67,7 @@ stock:true
 id:7,
 name:"Orange",
 price:90,
-oldPrice:110,
-image:"./images/orange.svg",
+oldPrice:110,    image:"./images/orange.png",
 category:"Fruits",
 rating:5,
 stock:true
@@ -151,8 +150,7 @@ stock:true
 id:15,
 name:"Whole Wheat Bread",
 price:50,
-oldPrice:65,
-image:"./images/whole-wheat-bread.svg",
+oldPrice:65,    image:"./images/wheatbread.jpeg",
 category:"Bakery",
 rating:4,
 stock:true
@@ -173,8 +171,7 @@ stock:true
 id:17,
 name:"Cold Coffee (1L)",
 price:120,
-oldPrice:150,
-image:"./images/cold-coffee.svg",
+oldPrice:150,    image:"./images/coldCoffee.jpg",
 category:"Beverages",
 rating:4,
 stock:true

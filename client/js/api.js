@@ -7,6 +7,97 @@ function imgUrl(path) {
   return path + sep + 'v=' + IMG_CACHE_BUST;
 }
 
+// ─── Centralized Product Image Resolver ───
+// Maps product names to their actual image files on disk.
+// The filesystem (client/images/) is the SOLE source of truth.
+// Any path not in this map gets a placeholder.
+const PRODUCT_IMAGE_MAP = {
+  "Fresh Milk":          "./images/milk.png",
+  "Curd (Yogurt)":      "./images/curd.webp",
+  "Butter (500g)":      "./images/butter.jpg",
+  "Cheese Slices":      "./images/cheese.webp",
+  "Red Apple":           "./images/apple.png",
+  "Banana (Dozen)":     "./images/banana.jpg",
+  "Orange":              "./images/orange.png",
+  "Pomegranate":         "./images/pomegranate.png",
+  "Spinach (Bunch)":    "./images/spinach.png",
+  "Tomato (1kg)":       "./images/tomato.jpg",
+  "Potato (1kg)":       "./images/potato.png",
+  "Onion (1kg)":        "./images/onion.jpeg",
+  "Brown Bread":         "./images/bread.jpg",
+  "Croissant":           "./images/croissant.jpg",
+  "Whole Wheat Bread":   "./images/wheatbread.jpeg",
+  "Orange Juice (1L)":  "./images/orange-juice.png",
+  "Cold Coffee (1L)":   "./images/coldCoffee.jpg",
+  "Green Tea (Pack)":   "./images/green-tea.jpeg",
+  "Chicken Breast (500g)": "./images/chicken.jpeg",
+  "Fish Fillet (250g)":     "./images/fish-fillet.jpeg",
+  "Basmati Rice (1kg)": "./images/rice.jpg",
+  "Wheat Flour (1kg)":  "./images/flour.jpg",
+  "Hand Wash (250ml)":  "./images/handwash.avif",
+  "Shampoo (200ml)":    "./images/shampoo.webp",
+};
+
+/**
+ * Helper: normalize a product name for map lookup.
+ * Strips parenthetical content, trims, lowercases, removes special chars.
+ * e.g. "Potato (1kg)" → "potato"
+ */
+function normalizeProductName(name) {
+  if (!name) return "";
+  return name
+    .replace(/\(.*?\)/g, "")   // remove (1kg), (250ml), etc.
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "")        // remove spaces
+    .replace(/[^a-z0-9]/g, ""); // remove special chars
+}
+
+/**
+ * Cached normalized lookup map (lazy-built from PRODUCT_IMAGE_MAP).
+ */
+var _normalizedImageMap = null;
+function getNormalizedImageMap() {
+  if (_normalizedImageMap) return _normalizedImageMap;
+  _normalizedImageMap = {};
+  for (var key in PRODUCT_IMAGE_MAP) {
+    if (PRODUCT_IMAGE_MAP.hasOwnProperty(key)) {
+      _normalizedImageMap[normalizeProductName(key)] = PRODUCT_IMAGE_MAP[key];
+    }
+  }
+  return _normalizedImageMap;
+}
+
+/**
+ * resolveProductImage(product)
+ *
+ * Centralized helper that returns the CORRECT image path for any product.
+ * Uses the product name (consistent across all data sources) to look up the
+ * actual image file that exists on disk, regardless of whatever stale path
+ * might be stored in MongoDB or the static data.
+ *
+ * The lookup is fuzzy: "Potato (1kg)" maps to "potato" → "./images/potato.png".
+ *
+ * Usage:
+ *   <img src="imgUrl(resolveProductImage(product))" alt="...">
+ */
+function resolveProductImage(product) {
+  if (!product) return "";
+  // 1. Look up by exact product name (most reliable)
+  var mapped = PRODUCT_IMAGE_MAP[product.name];
+  if (mapped) return mapped;
+  // 2. Fuzzy lookup using normalized name
+  var normalized = normalizeProductName(product.name);
+  if (normalized) {
+    var normMap = getNormalizedImageMap();
+    mapped = normMap[normalized];
+    if (mapped) return mapped;
+  }
+  // 3. Fallback: use whatever image path the product has
+  if (product.image) return product.image;
+  return "";
+}
+
 // ─── Environment Detection ───
 // Detect if running locally (localhost) or deployed (Netlify)
 function getApiBaseUrl() {

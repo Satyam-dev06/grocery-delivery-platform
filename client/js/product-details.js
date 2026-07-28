@@ -23,9 +23,6 @@ async function loadProduct() {
   if (!id) { showError("No product ID specified."); return; }
   try {
     var product = await fetchProductById(id);
-    // Fix stale image paths by matching product name against static products.js data.
-    // Names are identical across MongoDB and static data, so this always works.
-    product = fixImagePath(product);
     currentProduct = product;
     renderProduct(product);
   } catch (e) {
@@ -39,37 +36,6 @@ async function loadProduct() {
     }
     showError(e.message || "Failed to load product.");
   }
-}
-
-// Match by name (always consistent), not ID (MongoDB ObjectId vs static numeric)
-function fixImagePath(product) {
-  if (!product || !product.image || typeof products === "undefined") return product;
-  // Only check paths that end with .svg — the 3 remaining SVGs (orange, whole-wheat-bread, cold-coffee)
-  // still exist, so only fix paths that DON'T match known-good SVGs
-  var knownExistingSvgs = ["orange.svg", "whole-wheat-bread.svg", "cold-coffee.svg"];
-  var needsFix = product.image.indexOf(".svg") !== -1;
-  // Don't fix known-good SVGs
-  if (needsFix) {
-    // Check it's NOT one of the 3 SVGs that still exist
-    for (var k = 0; k < knownExistingSvgs.length; k++) {
-      if (product.image.indexOf(knownExistingSvgs[k]) !== -1) {
-        needsFix = false;
-        break;
-      }
-    }
-  }
-  // Also fix bread.png -> bread.jpg (bread.png exists but bread.jpg is the primary photo)
-  if (!needsFix && product.image.indexOf("bread.png") !== -1) {
-    needsFix = true;
-  }
-  if (needsFix) {
-    var match = products.find(function(p) { return p.name === product.name; });
-    if (match && match.image && match.image !== product.image) {
-      console.warn("Fixed stale product image:", product.image, "->", match.image);
-      product.image = match.image;
-    }
-  }
-  return product;
 }
 
 function getStaticProductById(id) {
@@ -111,9 +77,11 @@ function renderProduct(product) {
   if (product.stock) { se.innerHTML = '<i class="fas fa-check-circle" style="color:#2E7D32;"></i> In Stock'; document.querySelector(".pd-add-cart").disabled = false; document.querySelector(".pd-add-cart").style.opacity = "1"; document.querySelector(".pd-buy-now").disabled = false; document.querySelector(".pd-buy-now").style.opacity = "1"; }
   else { se.innerHTML = '<i class="fas fa-times-circle" style="color:#E53935;"></i> Out of Stock'; document.querySelector(".pd-add-cart").disabled = true; document.querySelector(".pd-add-cart").style.opacity = "0.5"; document.querySelector(".pd-buy-now").disabled = true; document.querySelector(".pd-buy-now").style.opacity = "0.5"; }
   document.getElementById("pdDescription").textContent = product.description || "No description available.";
+
+  // ── Main Image with resolveProductImage() ──
   var mainImg = document.getElementById("pdMainImage");
-  // Safety net: set onerror BEFORE src to avoid race conditions
   mainImg.onerror = function () {
+    // If the resolved image fails too, try static fallback
     if (typeof products !== "undefined") {
       var match = products.find(function (p) { return p.name === product.name; });
       if (match && match.image) {
@@ -125,11 +93,14 @@ function renderProduct(product) {
     }
     this.style.display = "none";
   };
-  mainImg.src = imgUrl(product.image) || "";
+  mainImg.src = imgUrl(resolveProductImage(product)) || "";
+
+  // ── Thumbnails ──
   var tc = document.getElementById("pdThumbnails");
   tc.innerHTML = "";
-  var thumbs = [product.image];
+  var thumbs = [resolveProductImage(product)];
   thumbs.forEach(function (src) { if (!src) return; var t = document.createElement("img"); t.src = imgUrl(src); t.className = "pd-thumb active"; t.alt = product.name; t.onclick = function () { selectThumbnail(this); }; tc.appendChild(t); });
+
   checkWishlistState(product._id || product.id);
   renderOffers(product);
   var dl = document.getElementById("pdDeliveryTime");
@@ -159,7 +130,7 @@ function pdAddToCart() {
   } else {
     var cart = JSON.parse(localStorage.getItem("cart")) || [];
     var existing = cart.find(function (item) { return (item._id || item.id) === id; });
-    if (existing) { existing.quantity += qty; } else { cart.push({ _id: id, id: id, name: currentProduct.name, price: currentProduct.price, oldPrice: currentProduct.oldPrice || 0, image: currentProduct.image, quantity: qty }); }
+    if (existing) { existing.quantity += qty; } else { cart.push({ _id: id, id: id, name: currentProduct.name, price: currentProduct.price, oldPrice: currentProduct.oldPrice || 0, image: resolveProductImage(currentProduct), quantity: qty }); }
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
     showToast(currentProduct.name + " x" + qty + " added to cart!", "success");
@@ -250,11 +221,11 @@ async function loadRelatedProducts(category, excludeId) {
       if (product.oldPrice && product.oldPrice > product.price) disc = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
       container.innerHTML +=
         '<div class="product-card">' + (disc > 0 ? '<div class="discount-badge">' + disc + '% OFF</div>' : '') +
-        '<img src="' + imgUrl(product.image) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'" onclick="window.location.href=\'product-details.html?id=' + pid + '\'" style="cursor:pointer;">' +
-        '<h3 onclick="window.location.href=\'product-details.html?id=' + pid + '\'" style="cursor:pointer;">' + product.name + '</h3>' +
+        '<img src="' + imgUrl(resolveProductImage(product)) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\\'none\\'" onclick="window.location.href=\\'product-details.html?id=' + pid + '\\'" style="cursor:pointer;">' +
+        '<h3 onclick="window.location.href=\\'product-details.html?id=' + pid + '\\'" style="cursor:pointer;">' + product.name + '</h3>' +
         (product.oldPrice && product.oldPrice > product.price ? '<p class="old-price">\u20B9' + product.oldPrice + '</p>' : '') +
         '<p class="price">\u20B9' + product.price + '</p>' +
-        '<button onclick="addToCartFromDetails(\'' + pid + '\')"><i class="fas fa-shopping-cart"></i> Add To Cart</button></div>';
+        '<button onclick="addToCartFromDetails(\\'' + pid + '\\')"><i class="fas fa-shopping-cart"></i> Add To Cart</button></div>';
     });
     if (typeof observeProductCards === "function") observeProductCards();
   } catch (e) { container.innerHTML = '<div class="empty-search"><p>Could not load related products.</p></div>'; }

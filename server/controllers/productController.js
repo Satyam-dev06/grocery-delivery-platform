@@ -18,7 +18,7 @@ function getMemoryStore() {
       { _id: "p4", id: 4, name: "Cheese Slices", price: 90, oldPrice: 120, image: "./images/cheese.webp", category: "Dairy", brand: "Amul", description: "Processed cheese slices for sandwiches.", rating: 5, stock: false, featured: false, trending: false, recommended: true },
       { _id: "p5", id: 5, name: "Red Apple", price: 120, oldPrice: 150, image: "./images/apple.png", category: "Fruits", brand: "Fresh Valley", description: "Juicy and crisp red apples from Kashmir.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
       { _id: "p6", id: 6, name: "Banana (Dozen)", price: 60, oldPrice: 80, image: "./images/banana.jpg", category: "Fruits", brand: "Fresh Valley", description: "Ripe and sweet bananas sold in a dozen pack.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
-      { _id: "p7", id: 7, name: "Orange", price: 90, oldPrice: 110, image: "./images/orange.svg", category: "Fruits", brand: "Fresh Valley", description: "Sweet and tangy oranges packed with vitamin C.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
+      { _id: "p7", id: 7, name: "Orange", price: 90, oldPrice: 110, image: "./images/orange.png", category: "Fruits", brand: "Fresh Valley", description: "Sweet and tangy oranges packed with vitamin C.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
       { _id: "p8", id: 8, name: "Pomegranate", price: 150, oldPrice: 180, image: "./images/pomegranate.png", category: "Fruits", brand: "Fresh Valley", description: "Fresh pomegranates with deep red seeds.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
       { _id: "p9", id: 9, name: "Spinach (Bunch)", price: 40, oldPrice: 55, image: "./images/spinach.png", category: "Vegetables", brand: "Green Farms", description: "Fresh green spinach rich in iron.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
       { _id: "p10", id: 10, name: "Tomato (1kg)", price: 35, oldPrice: 50, image: "./images/tomato.jpg", category: "Vegetables", brand: "Green Farms", description: "Farm-fresh juicy tomatoes.", rating: 4, stock: true, featured: false, trending: true, recommended: false },
@@ -26,9 +26,9 @@ function getMemoryStore() {
       { _id: "p12", id: 12, name: "Onion (1kg)", price: 45, oldPrice: 60, image: "./images/onion.jpeg", category: "Vegetables", brand: "Green Farms", description: "Fresh red onions with strong flavor.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
       { _id: "p13", id: 13, name: "Brown Bread", price: 45, oldPrice: 60, image: "./images/bread.jpg", category: "Bakery", brand: "Britannia", description: "Healthy whole wheat brown bread rich in fiber.", rating: 4, stock: false, featured: false, trending: false, recommended: true },
       { _id: "p14", id: 14, name: "Croissant", price: 35, oldPrice: 50, image: "./images/croissant.jpg", category: "Bakery", brand: "Britannia", description: "Flaky and buttery croissants baked fresh daily.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
-      { _id: "p15", id: 15, name: "Whole Wheat Bread", price: 50, oldPrice: 65, image: "./images/whole-wheat-bread.svg", category: "Bakery", brand: "Britannia", description: "Soft whole wheat bread for healthy sandwiches.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
+      { _id: "p15", id: 15, name: "Whole Wheat Bread", price: 50, oldPrice: 65, image: "./images/wheatbread.jpeg", category: "Bakery", brand: "Britannia", description: "Soft whole wheat bread for healthy sandwiches.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
       { _id: "p16", id: 16, name: "Orange Juice (1L)", price: 80, oldPrice: 100, image: "./images/orange-juice.png", category: "Beverages", brand: "Tata", description: "Refreshing orange juice with no added sugar.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
-      { _id: "p17", id: 17, name: "Cold Coffee (1L)", price: 120, oldPrice: 150, image: "./images/cold-coffee.svg", category: "Beverages", brand: "Nestlé", description: "Ready-to-drink cold coffee with creamy taste.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p17", id: 17, name: "Cold Coffee (1L)", price: 120, oldPrice: 150, image: "./images/coldCoffee.jpg", category: "Beverages", brand: "Nestlé", description: "Ready-to-drink cold coffee with creamy taste.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
       { _id: "p18", id: 18, name: "Green Tea (Pack)", price: 180, oldPrice: 220, image: "./images/green-tea.jpeg", category: "Beverages", brand: "Tata", description: "Premium green tea bags with natural antioxidants.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
       { _id: "p19", id: 19, name: "Chicken Breast (500g)", price: 250, oldPrice: 320, image: "./images/chicken.jpeg", category: "Meat", brand: "Fresh Catch", description: "Boneless chicken breast with high protein.", rating: 4, stock: true, featured: true, trending: true, recommended: true },
       { _id: "p20", id: 20, name: "Fish Fillet (250g)", price: 200, oldPrice: 260, image: "./images/fish-fillet.jpeg", category: "Meat", brand: "Fresh Catch", description: "Fresh boneless fish fillets rich in omega-3.", rating: 5, stock: true, featured: false, trending: false, recommended: false },
@@ -327,15 +327,16 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Helper: check if a product image path refers to a deleted SVG file
+// Helper: check if a product image path refers to a deleted file.
+// Since all source data now points to correct images, this is a safety net
+// for any stale data that may still exist in MongoDB from old seeds.
 function needsImageFix(imagePath) {
-  if (!imagePath || imagePath.indexOf(".svg") === -1) return false;
-  // These 3 SVGs still exist — no fix needed
-  var knownExisting = ["orange.svg", "whole-wheat-bread.svg", "cold-coffee.svg"];
-  for (var i = 0; i < knownExisting.length; i++) {
-    if (imagePath.indexOf(knownExisting[i]) !== -1) return false;
-  }
-  return true;
+  if (!imagePath) return false;
+  // Fix deleted SVGs
+  if (imagePath.indexOf(".svg") !== -1) return true;
+  // Fix bread.png (old file, bread.jpg is the primary photo)
+  if (imagePath.indexOf("bread.png") !== -1) return true;
+  return false;
 }
 
 const createProduct = async (req, res) => {

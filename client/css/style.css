@@ -501,8 +501,18 @@ h1,h2,h3,h4,h5,h6 { font-family:var(--font-heading); line-height:1.3; color:var(
 .product-container { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:var(--space-6); max-width:var(--max-width); margin:0 auto; }
 .product-card { position:relative; background:var(--card); border-radius:var(--radius-xl); overflow:hidden; box-shadow:var(--shadow-sm); transition:all var(--transition-base); border:1px solid var(--border-light); display:flex; flex-direction:column; height:100%; }
 .product-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-lg); border-color:transparent; }
-.product-card > img { width:160px; height:160px; object-fit:contain; margin:var(--space-6) auto 0; transition:transform var(--transition-slow); }
-.product-card:hover > img { transform:scale(1.08); }
+.pd-card-link { display:flex; align-items:center; justify-content:center; }
+.product-card .pd-card-link:first-of-type {
+  height:220px; display:flex; align-items:center; justify-content:center;
+  overflow:hidden; padding:var(--space-5); position:relative;
+}
+.product-card > img,
+.product-card .pd-card-link > img {
+  width:100%; height:100%; max-width:160px; max-height:160px;
+  object-fit:contain; transition:transform var(--transition-slow);
+}
+.product-card:hover > img,
+.product-card:hover .pd-card-link > img { transform:scale(1.08); }
 .product-card > h3 { font-size:15px; font-weight:600; color:var(--text); line-height:1.4; padding:var(--space-4) var(--space-4) 0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .product-card > .price { font-size:20px; font-weight:700; color:var(--primary); font-family:var(--font-heading); padding:0 var(--space-4); margin:var(--space-1) 0; }
 .product-card > .old-price { font-size:14px; color:var(--text-muted); text-decoration:line-through; padding:0 var(--space-4); margin:var(--space-1) 0 0; }
