@@ -288,10 +288,27 @@ async function getProductsFromMemory(req, res) {
 
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.status(200).json(product);
+    // If MongoDB is connected, try it first
+    if (isMongoConnected()) {
+      const product = await Product.findById(req.params.id);
+      if (product) return res.status(200).json(product);
+    }
+    // Fallback: search in-memory store by _id or id
+    const allProducts = getMemoryStore();
+    const product = allProducts.find(function (p) {
+      return String(p._id) === req.params.id;
+    });
+    if (product) return res.status(200).json(product);
+    return res.status(404).json({ message: "Product not found" });
   } catch (error) {
+    // If MongoDB query fails, try in-memory as final fallback
+    try {
+      const allProducts = getMemoryStore();
+      const product = allProducts.find(function (p) {
+        return String(p._id) === req.params.id;
+      });
+      if (product) return res.status(200).json(product);
+    } catch (e) {}
     res.status(500).json({ message: error.message });
   }
 };

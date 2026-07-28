@@ -23,11 +23,60 @@ async function loadProduct() {
   if (!id) { showError("No product ID specified."); return; }
   try {
     var product = await fetchProductById(id);
+    // Fix stale image paths by matching product name against static products.js data.
+    // Names are identical across MongoDB and static data, so this always works.
+    product = fixImagePath(product);
     currentProduct = product;
     renderProduct(product);
   } catch (e) {
+    // API failed — try fallback from static products.js
+    var fallback = getStaticProductById(id);
+    if (fallback) {
+      console.warn("API failed, using static product data:", fallback.name);
+      currentProduct = fallback;
+      renderProduct(fallback);
+      return;
+    }
     showError(e.message || "Failed to load product.");
   }
+}
+
+// Match by name (always consistent), not ID (MongoDB ObjectId vs static numeric)
+function fixImagePath(product) {
+  if (!product || !product.image || typeof products === "undefined") return product;
+  // Only check paths that end with .svg — the 3 remaining SVGs (orange, whole-wheat-bread, cold-coffee)
+  // still exist, so only fix paths that DON'T match known-good SVGs
+  var knownExistingSvgs = ["orange.svg", "whole-wheat-bread.svg", "cold-coffee.svg"];
+  var needsFix = product.image.indexOf(".svg") !== -1;
+  // Don't fix known-good SVGs
+  if (needsFix) {
+    // Check it's NOT one of the 3 SVGs that still exist
+    for (var k = 0; k < knownExistingSvgs.length; k++) {
+      if (product.image.indexOf(knownExistingSvgs[k]) !== -1) {
+        needsFix = false;
+        break;
+      }
+    }
+  }
+  // Also fix bread.png -> bread.jpg (bread.png exists but bread.jpg is the primary photo)
+  if (!needsFix && product.image.indexOf("bread.png") !== -1) {
+    needsFix = true;
+  }
+  if (needsFix) {
+    var match = products.find(function(p) { return p.name === product.name; });
+    if (match && match.image && match.image !== product.image) {
+      console.warn("Fixed stale product image:", product.image, "->", match.image);
+      product.image = match.image;
+    }
+  }
+  return product;
+}
+
+function getStaticProductById(id) {
+  if (typeof products === "undefined") return null;
+  return products.find(function (p) {
+    return String(p._id || p.id) === String(id);
+  }) || null;
 }
 
 function showError(msg) {
@@ -62,7 +111,21 @@ function renderProduct(product) {
   if (product.stock) { se.innerHTML = '<i class="fas fa-check-circle" style="color:#2E7D32;"></i> In Stock'; document.querySelector(".pd-add-cart").disabled = false; document.querySelector(".pd-add-cart").style.opacity = "1"; document.querySelector(".pd-buy-now").disabled = false; document.querySelector(".pd-buy-now").style.opacity = "1"; }
   else { se.innerHTML = '<i class="fas fa-times-circle" style="color:#E53935;"></i> Out of Stock'; document.querySelector(".pd-add-cart").disabled = true; document.querySelector(".pd-add-cart").style.opacity = "0.5"; document.querySelector(".pd-buy-now").disabled = true; document.querySelector(".pd-buy-now").style.opacity = "0.5"; }
   document.getElementById("pdDescription").textContent = product.description || "No description available.";
-  document.getElementById("pdMainImage").src = imgUrl(product.image) || "";
+  var mainImg = document.getElementById("pdMainImage");
+  // Safety net: set onerror BEFORE src to avoid race conditions
+  mainImg.onerror = function () {
+    if (typeof products !== "undefined") {
+      var match = products.find(function (p) { return p.name === product.name; });
+      if (match && match.image) {
+        console.warn("Image load failed, using static fallback:", match.image);
+        this.onerror = null; // prevent infinite loop
+        this.src = imgUrl(match.image);
+        return;
+      }
+    }
+    this.style.display = "none";
+  };
+  mainImg.src = imgUrl(product.image) || "";
   var tc = document.getElementById("pdThumbnails");
   tc.innerHTML = "";
   var thumbs = [product.image];
