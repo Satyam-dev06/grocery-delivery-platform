@@ -1,3 +1,12 @@
+// ─── Cache Busting ───
+// Appended to image URLs to force browsers/CDN to load the latest images
+const IMG_CACHE_BUST = Date.now();
+function imgUrl(path) {
+  if (!path) return path;
+  var sep = path.indexOf('?') !== -1 ? '&' : '?';
+  return path + sep + 'v=' + IMG_CACHE_BUST;
+}
+
 // ─── Environment Detection ───
 // Detect if running locally (localhost) or deployed (Netlify)
 function getApiBaseUrl() {

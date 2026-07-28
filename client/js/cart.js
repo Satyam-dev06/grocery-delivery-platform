@@ -133,7 +133,7 @@ function renderCart() {
       '<div class="cart-item-card" data-id="' + p.id + '">' +
         '<a href="product-details.html?id=' + p.id + '" class="cart-item-img-link">' +
           '<div class="cart-item-img-wrap">' +
-            '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+            '<img src="' + imgUrl(p.image) + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
           '</div>' +
         '</a>' +
         '<div class="cart-item-body">' +
@@ -426,7 +426,7 @@ function renderSavedItems() {
     var sid = item._id || item.id;
     savedItems.innerHTML +=
       '<div class="cart-saved-item">' +
-        '<img src="' + (item.image || "") + '" alt="' + (item.name || "") + '" onerror="this.style.display=\'none\'">' +
+        '<img src="' + imgUrl(item.image || "") + '" alt="' + (item.name || "") + '" onerror="this.style.display=\'none\'">' +
         '<div class="csi-info">' +
           '<h4>' + (item.name || "Product") + '</h4>' +
           '<span class="csi-price">₹' + (item.price || 0) + '</span>' +
@@ -497,7 +497,7 @@ function renderRecommended(prods, container) {
     var pid = p._id || p.id;
     container.innerHTML +=
       '<div class="cart-rec-item">' +
-        '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">' +
+        '<img src="' + imgUrl(p.image) + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">' +
         '<div class="cri-info">' +
           '<h4>' + p.name + '</h4>' +
           '<span class="cri-price">₹' + p.price + '</span>' +

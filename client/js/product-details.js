@@ -62,11 +62,11 @@ function renderProduct(product) {
   if (product.stock) { se.innerHTML = '<i class="fas fa-check-circle" style="color:#2E7D32;"></i> In Stock'; document.querySelector(".pd-add-cart").disabled = false; document.querySelector(".pd-add-cart").style.opacity = "1"; document.querySelector(".pd-buy-now").disabled = false; document.querySelector(".pd-buy-now").style.opacity = "1"; }
   else { se.innerHTML = '<i class="fas fa-times-circle" style="color:#E53935;"></i> Out of Stock'; document.querySelector(".pd-add-cart").disabled = true; document.querySelector(".pd-add-cart").style.opacity = "0.5"; document.querySelector(".pd-buy-now").disabled = true; document.querySelector(".pd-buy-now").style.opacity = "0.5"; }
   document.getElementById("pdDescription").textContent = product.description || "No description available.";
-  document.getElementById("pdMainImage").src = product.image || "";
+  document.getElementById("pdMainImage").src = imgUrl(product.image) || "";
   var tc = document.getElementById("pdThumbnails");
   tc.innerHTML = "";
   var thumbs = [product.image];
-  thumbs.forEach(function (src) { if (!src) return; var t = document.createElement("img"); t.src = src; t.className = "pd-thumb active"; t.alt = product.name; t.onclick = function () { selectThumbnail(this); }; tc.appendChild(t); });
+  thumbs.forEach(function (src) { if (!src) return; var t = document.createElement("img"); t.src = imgUrl(src); t.className = "pd-thumb active"; t.alt = product.name; t.onclick = function () { selectThumbnail(this); }; tc.appendChild(t); });
   checkWishlistState(product._id || product.id);
   renderOffers(product);
   var dl = document.getElementById("pdDeliveryTime");
@@ -187,7 +187,7 @@ async function loadRelatedProducts(category, excludeId) {
       if (product.oldPrice && product.oldPrice > product.price) disc = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
       container.innerHTML +=
         '<div class="product-card">' + (disc > 0 ? '<div class="discount-badge">' + disc + '% OFF</div>' : '') +
-        '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'" onclick="window.location.href=\'product-details.html?id=' + pid + '\'" style="cursor:pointer;">' +
+        '<img src="' + imgUrl(product.image) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'" onclick="window.location.href=\'product-details.html?id=' + pid + '\'" style="cursor:pointer;">' +
         '<h3 onclick="window.location.href=\'product-details.html?id=' + pid + '\'" style="cursor:pointer;">' + product.name + '</h3>' +
         (product.oldPrice && product.oldPrice > product.price ? '<p class="old-price">\u20B9' + product.oldPrice + '</p>' : '') +
         '<p class="price">\u20B9' + product.price + '</p>' +

@@ -134,7 +134,7 @@ function renderOrder(order, payment) {
     itemsHtml +=
       "<tr>" +
       '<td class="item-info">' +
-      (item.image ? '<img src="' + item.image + '" alt="' + item.name + '" class="item-thumb" onerror="this.style.display=\'none\'">' : "") +
+      (item.image ? '<img src="' + imgUrl(item.image) + '" alt="' + item.name + '" class="item-thumb" onerror="this.style.display=\'none\'">' : "") +
       "<span>" + (item.name || "Product") + "</span>" +
       "</td>" +
       "<td>" + item.quantity + "</td>" +

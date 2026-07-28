@@ -61,7 +61,7 @@ async function renderWishlist() {
     const prodId = product._id || product.id;
     wishlistContainer.innerHTML += `
       <div class="product-card">
-        <a href="product-details.html?id=${prodId}" class="pd-card-link"><img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'"></a>
+        <a href="product-details.html?id=${prodId}" class="pd-card-link"><img src="${imgUrl(product.image)}" alt="${product.name}" onerror="this.style.display='none'"></a>
         <a href="product-details.html?id=${prodId}" class="pd-card-link"><h3>${product.name}</h3></a>
         <p class="price">₹${product.price}</p>
         <button onclick="window.location.href='cart.html'">🛒 Go To Cart</button>

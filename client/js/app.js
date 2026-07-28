@@ -251,7 +251,7 @@ function displayProducts(productList, append) {
         '</div>' +
         (discount > 0 ? '<div class="discount-badge">' + discount + '% OFF</div>' : '') +
         '<a href="product-details.html?id=' + id + '" class="pd-card-link">' +
-        '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+        '<img src="' + imgUrl(product.image) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
         '</a>' +
         '<a href="product-details.html?id=' + id + '" class="pd-card-link">' +
         '<h3>' + displayName + '</h3>' +
@@ -549,7 +549,7 @@ async function loadRecommendationsAndTrending() {
       [].concat(staticProducts).sort(function(a,b){return b.rating - a.rating;}).slice(0,4).forEach(function (product) {
         recommendedContainer.innerHTML +=
           '<div class="product-card">' +
-            '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+            '<img src="' + imgUrl(product.image) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
             '<h3>' + product.name + '</h3>' +
             '<p class="price">₹' + product.price + '</p>' +
             '<button onclick="addToCart(\'' + (product._id || product.id) + '\')"><i class="fas fa-shopping-cart"></i> Add To Cart</button>' +
@@ -561,7 +561,7 @@ async function loadRecommendationsAndTrending() {
       [].concat(staticProducts).sort(function(a,b){return b.rating - a.rating;}).slice(0,4).forEach(function (product) {
         trendingContainer.innerHTML +=
             '<div class="product-card">' +
-              '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+              '<img src="' + imgUrl(product.image) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
               '<h3>' + product.name + '</h3>' +
               '<p class="price">₹' + product.price + '</p>' +
               '<button onclick="addToCart(\'' + (product._id || product.id) + '\')"><i class="fas fa-shopping-cart"></i> Add To Cart</button>' +
@@ -1086,7 +1086,7 @@ function renderSearchSuggestions(query) {
       prods.forEach(function (p, idx) {
         var displayName = highlightMatch(p.name, query);
         html += '<div class="suggestion-item" data-index="' + idx + '" onclick="selectProductSuggestion(' + idx + ')" role="option" tabindex="0">' +
-          '<img src="' + p.image + '" alt="" class="suggestion-thumb" onerror="this.style.display=\'none\'">' +
+          '<img src="' + imgUrl(p.image) + '" alt="" class="suggestion-thumb" onerror="this.style.display=\'none\'">' +
           '<div class="suggestion-text"><span class="suggestion-name">' + displayName + '</span>' +
           '<span class="suggestion-price">₹' + p.price + '</span></div>' +
           '</div>';
@@ -1113,7 +1113,7 @@ function renderSearchSuggestions(query) {
       matches.forEach(function (p, idx) {
         var displayName2 = highlightMatch(p.name, query);
         html2 += '<div class="suggestion-item" data-index="' + idx + '" onclick="selectProductSuggestion(' + idx + ')" role="option" tabindex="0">' +
-          '<img src="' + p.image + '" alt="" class="suggestion-thumb" onerror="this.style.display=\'none\'">' +
+          '<img src="' + imgUrl(p.image) + '" alt="" class="suggestion-thumb" onerror="this.style.display=\'none\'">' +
           '<div class="suggestion-text"><span class="suggestion-name">' + displayName2 + '</span>' +
           '<span class="suggestion-price">₹' + p.price + '</span></div>' +
           '</div>';
