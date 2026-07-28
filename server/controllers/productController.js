@@ -3,29 +3,6 @@ const mongoose = require("mongoose");
 
 // ─── In-memory product store (fallback when MongoDB is unavailable) ───
 let memoryStore = null;
-const PRODUCT_IMAGE_BY_NAME = {
-  "Croissant": "/images/croissant.jpg",
-  "Curd (Yogurt)": "/images/curd.webp",
-  "Orange Juice (1L)": "/images/orange-juice.png",
-  "Potato (1kg)": "/images/potato.png",
-  "Pomegranate": "/images/pomegranate.png",
-  "Onion (1kg)": "/images/onion.jpeg",
-  "Cheese Slices": "/images/cheese.webp",
-  "Tomato (1kg)": "/images/tomato.jpg",
-  "Banana (Dozen)": "/images/banana.jpg",
-  "Butter (500g)": "/images/butter.jpg",
-  "Green Tea (Pack)": "/images/green-tea.jpeg",
-  "Fish Fillet (250g)": "/images/fish-fillet.jpeg",
-  "Wheat Flour (1kg)": "/images/flour.jpg",
-  "Brown Bread": "/images/bread.jpg",
-};
-
-function withCanonicalImage(product) {
-  if (!product || typeof product !== "object") return product;
-  const canonicalImage = PRODUCT_IMAGE_BY_NAME[product.name];
-  if (!canonicalImage) return product;
-  return { ...product, image: canonicalImage };
-}
 
 function getMemoryStore() {
   if (memoryStore) return memoryStore;
@@ -35,30 +12,30 @@ function getMemoryStore() {
   // async script that calls process.exit() when MongoDB is unavailable,
   // which would kill the server process. Instead we define the products inline.
   memoryStore = [
-      { _id: "p1", name: "Fresh Milk", price: 65, oldPrice: 80, image: "/images/milk.png", category: "Dairy", brand: "Mother Dairy", description: "Fresh full-cream milk sourced from local farms.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
-      { _id: "p2", name: "Curd (Yogurt)", price: 40, oldPrice: 55, image: "/images/curd.webp", category: "Dairy", brand: "Mother Dairy", description: "Thick and creamy yogurt made from fresh milk.", rating: 4, stock: true, featured: false, trending: true, recommended: true },
-      { _id: "p3", name: "Butter (500g)", price: 55, oldPrice: 70, image: "/images/butter.jpg", category: "Dairy", brand: "Amul", description: "Creamy salted butter perfect for cooking.", rating: 4, stock: true, featured: true, trending: false, recommended: false },
-      { _id: "p4", name: "Cheese Slices", price: 90, oldPrice: 120, image: "/images/cheese.webp", category: "Dairy", brand: "Amul", description: "Processed cheese slices for sandwiches.", rating: 5, stock: false, featured: false, trending: false, recommended: true },
-      { _id: "p5", name: "Red Apple", price: 120, oldPrice: 150, image: "/images/apple.png", category: "Fruits", brand: "Fresh Valley", description: "Juicy and crisp red apples from Kashmir.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
-      { _id: "p6", name: "Banana (Dozen)", price: 60, oldPrice: 80, image: "/images/banana.jpg", category: "Fruits", brand: "Fresh Valley", description: "Ripe and sweet bananas sold in a dozen pack.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
-      { _id: "p7", name: "Orange", price: 90, oldPrice: 110, image: "/images/orange.svg", category: "Fruits", brand: "Fresh Valley", description: "Sweet and tangy oranges packed with vitamin C.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
-      { _id: "p8", name: "Pomegranate", price: 150, oldPrice: 180, image: "/images/pomegranate.png", category: "Fruits", brand: "Fresh Valley", description: "Fresh pomegranates with deep red seeds.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
-      { _id: "p9", name: "Spinach (Bunch)", price: 40, oldPrice: 55, image: "/images/spinach.png", category: "Vegetables", brand: "Green Farms", description: "Fresh green spinach leaves rich in iron and nutrients.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
-      { _id: "p10", name: "Tomato (1kg)", price: 35, oldPrice: 50, image: "/images/tomato.jpg", category: "Vegetables", brand: "Green Farms", description: "Farm-fresh juicy tomatoes perfect for cooking.", rating: 4, stock: true, featured: false, trending: true, recommended: false },
-      { _id: "p11", name: "Potato (1kg)", price: 30, oldPrice: 40, image: "/images/potato.png", category: "Vegetables", brand: "Green Farms", description: "High-quality potatoes ideal for all your recipes.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
-      { _id: "p12", name: "Onion (1kg)", price: 45, oldPrice: 60, image: "/images/onion.jpeg", category: "Vegetables", brand: "Green Farms", description: "Fresh red onions with strong flavor.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
-      { _id: "p13", name: "Brown Bread", price: 45, oldPrice: 60, image: "/images/bread.jpg", category: "Bakery", brand: "Britannia", description: "Healthy whole wheat brown bread rich in fiber.", rating: 4, stock: false, featured: false, trending: false, recommended: true },
-      { _id: "p14", name: "Croissant", price: 35, oldPrice: 50, image: "/images/croissant.jpg", category: "Bakery", brand: "Britannia", description: "Flaky and buttery croissants baked fresh daily.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
-      { _id: "p15", name: "Whole Wheat Bread", price: 50, oldPrice: 65, image: "/images/whole-wheat-bread.svg", category: "Bakery", brand: "Britannia", description: "Soft whole wheat bread for healthy sandwiches.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
-      { _id: "p16", name: "Orange Juice (1L)", price: 80, oldPrice: 100, image: "/images/orange-juice.png", category: "Beverages", brand: "Tata", description: "Refreshing orange juice with no added sugar.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
-      { _id: "p17", name: "Cold Coffee (1L)", price: 120, oldPrice: 150, image: "/images/cold-coffee.svg", category: "Beverages", brand: "Nestlé", description: "Ready-to-drink cold coffee with creamy taste.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
-      { _id: "p18", name: "Green Tea (Pack)", price: 180, oldPrice: 220, image: "/images/green-tea.jpeg", category: "Beverages", brand: "Tata", description: "Premium green tea bags with natural antioxidants.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
-      { _id: "p19", name: "Chicken Breast (500g)", price: 250, oldPrice: 320, image: "/images/chicken.svg", category: "Meat", brand: "Fresh Catch", description: "Boneless chicken breast with high protein content.", rating: 4, stock: true, featured: true, trending: true, recommended: true },
-      { _id: "p20", name: "Fish Fillet (250g)", price: 200, oldPrice: 260, image: "/images/fish-fillet.jpeg", category: "Meat", brand: "Fresh Catch", description: "Fresh boneless fish fillets rich in omega-3.", rating: 5, stock: true, featured: false, trending: false, recommended: false },
-      { _id: "p21", name: "Basmati Rice (1kg)", price: 140, oldPrice: 180, image: "/images/rice.svg", category: "Grains", brand: "Tata", description: "Premium quality basmati rice with long grains.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
-      { _id: "p22", name: "Wheat Flour (1kg)", price: 45, oldPrice: 60, image: "/images/flour.jpg", category: "Grains", brand: "Britannia", description: "Finely ground whole wheat flour for soft rotis.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
-      { _id: "p23", name: "Hand Wash (250ml)", price: 95, oldPrice: 125, image: "/images/hand-wash.svg", category: "Personal Care", brand: "Tata", description: "Gentle hand wash with moisturizing properties.", rating: 4, stock: true, featured: false, trending: true, recommended: false },
-      { _id: "p24", name: "Shampoo (200ml)", price: 180, oldPrice: 240, image: "/images/shampoo.svg", category: "Personal Care", brand: "Nestlé", description: "Nourishing shampoo for silky smooth hair.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
+      { _id: "p1", name: "Fresh Milk", price: 65, oldPrice: 80, image: "./images/milk.png", category: "Dairy", brand: "Mother Dairy", description: "Fresh full-cream milk sourced from local farms.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
+      { _id: "p2", name: "Curd (Yogurt)", price: 40, oldPrice: 55, image: "./images/curd.svg", category: "Dairy", brand: "Mother Dairy", description: "Thick and creamy yogurt made from fresh milk.", rating: 4, stock: true, featured: false, trending: true, recommended: true },
+      { _id: "p3", name: "Butter (500g)", price: 55, oldPrice: 70, image: "./images/butter.svg", category: "Dairy", brand: "Amul", description: "Creamy salted butter perfect for cooking.", rating: 4, stock: true, featured: true, trending: false, recommended: false },
+      { _id: "p4", name: "Cheese Slices", price: 90, oldPrice: 120, image: "./images/cheese.svg", category: "Dairy", brand: "Amul", description: "Processed cheese slices for sandwiches.", rating: 5, stock: false, featured: false, trending: false, recommended: true },
+      { _id: "p5", name: "Red Apple", price: 120, oldPrice: 150, image: "./images/apple.png", category: "Fruits", brand: "Fresh Valley", description: "Juicy and crisp red apples from Kashmir.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
+      { _id: "p6", name: "Banana (Dozen)", price: 60, oldPrice: 80, image: "./images/banana.svg", category: "Fruits", brand: "Fresh Valley", description: "Ripe and sweet bananas sold in a dozen pack.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
+      { _id: "p7", name: "Orange", price: 90, oldPrice: 110, image: "./images/orange.svg", category: "Fruits", brand: "Fresh Valley", description: "Sweet and tangy oranges packed with vitamin C.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
+      { _id: "p8", name: "Pomegranate", price: 150, oldPrice: 180, image: "./images/pomegranate.svg", category: "Fruits", brand: "Fresh Valley", description: "Fresh pomegranates with deep red seeds.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p9", name: "Spinach (Bunch)", price: 40, oldPrice: 55, image: "./images/spinach.png", category: "Vegetables", brand: "Green Farms", description: "Fresh green spinach rich in iron.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
+      { _id: "p10", name: "Tomato (1kg)", price: 35, oldPrice: 50, image: "./images/tomato.svg", category: "Vegetables", brand: "Green Farms", description: "Farm-fresh juicy tomatoes.", rating: 4, stock: true, featured: false, trending: true, recommended: false },
+      { _id: "p11", name: "Potato (1kg)", price: 30, oldPrice: 40, image: "./images/potato.svg", category: "Vegetables", brand: "Green Farms", description: "High-quality potatoes for all recipes.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
+      { _id: "p12", name: "Onion (1kg)", price: 45, oldPrice: 60, image: "./images/onion.svg", category: "Vegetables", brand: "Green Farms", description: "Fresh red onions with strong flavor.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p13", name: "Brown Bread", price: 45, oldPrice: 60, image: "./images/bread.png", category: "Bakery", brand: "Britannia", description: "Healthy whole wheat brown bread rich in fiber.", rating: 4, stock: false, featured: false, trending: false, recommended: true },
+      { _id: "p14", name: "Croissant", price: 35, oldPrice: 50, image: "./images/croissant.svg", category: "Bakery", brand: "Britannia", description: "Flaky and buttery croissants baked fresh daily.", rating: 5, stock: true, featured: true, trending: true, recommended: false },
+      { _id: "p15", name: "Whole Wheat Bread", price: 50, oldPrice: 65, image: "./images/whole-wheat-bread.svg", category: "Bakery", brand: "Britannia", description: "Soft whole wheat bread for healthy sandwiches.", rating: 4, stock: true, featured: false, trending: false, recommended: true },
+      { _id: "p16", name: "Orange Juice (1L)", price: 80, oldPrice: 100, image: "./images/orange-juice.svg", category: "Beverages", brand: "Tata", description: "Refreshing orange juice with no added sugar.", rating: 5, stock: true, featured: true, trending: true, recommended: true },
+      { _id: "p17", name: "Cold Coffee (1L)", price: 120, oldPrice: 150, image: "./images/cold-coffee.svg", category: "Beverages", brand: "Nestlé", description: "Ready-to-drink cold coffee with creamy taste.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p18", name: "Green Tea (Pack)", price: 180, oldPrice: 220, image: "./images/green-tea.svg", category: "Beverages", brand: "Tata", description: "Premium green tea bags with natural antioxidants.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
+      { _id: "p19", name: "Chicken Breast (500g)", price: 250, oldPrice: 320, image: "./images/chicken.svg", category: "Meat", brand: "Fresh Catch", description: "Boneless chicken breast with high protein.", rating: 4, stock: true, featured: true, trending: true, recommended: true },
+      { _id: "p20", name: "Fish Fillet (250g)", price: 200, oldPrice: 260, image: "./images/fish.svg", category: "Meat", brand: "Fresh Catch", description: "Fresh boneless fish fillets rich in omega-3.", rating: 5, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p21", name: "Basmati Rice (1kg)", price: 140, oldPrice: 180, image: "./images/rice.svg", category: "Grains", brand: "Tata", description: "Premium quality basmati rice with long grains.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
+      { _id: "p22", name: "Wheat Flour (1kg)", price: 45, oldPrice: 60, image: "./images/flour.svg", category: "Grains", brand: "Britannia", description: "Finely ground whole wheat flour for soft rotis.", rating: 4, stock: true, featured: false, trending: false, recommended: false },
+      { _id: "p23", name: "Hand Wash (250ml)", price: 95, oldPrice: 125, image: "./images/hand-wash.svg", category: "Personal Care", brand: "Tata", description: "Gentle hand wash with moisturizing properties.", rating: 4, stock: true, featured: false, trending: true, recommended: false },
+      { _id: "p24", name: "Shampoo (200ml)", price: 180, oldPrice: 240, image: "./images/shampoo.svg", category: "Personal Care", brand: "Nestlé", description: "Nourishing shampoo for silky smooth hair.", rating: 5, stock: true, featured: true, trending: false, recommended: true },
     ];
   return memoryStore;
 }
@@ -149,7 +126,7 @@ async function getProductsFromMongo(req, res) {
     totalProducts = await Product.countDocuments(filter);
   }
 
-  const products = (await Product.find(filter).sort(sortOption).skip(skip).limit(limit).lean()).map(withCanonicalImage);
+  const products = await Product.find(filter).sort(sortOption).skip(skip).limit(limit).lean();
   const totalPages = Math.ceil(totalProducts / limit);
 
   const [categories, brands, priceStats] = await Promise.all([
@@ -313,7 +290,7 @@ const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res.status(200).json(withCanonicalImage(product.toObject ? product.toObject() : product));
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
