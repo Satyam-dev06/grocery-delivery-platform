@@ -10,6 +10,18 @@ function getApiBaseUrl() {
 }
 
 const API_BASE = getApiBaseUrl();
+const PRODUCT_IMAGE_CACHE_VERSION = "20260728";
+
+function normalizeProductImageUrl(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") return imageUrl;
+  if (imageUrl.indexOf("data:") === 0) return imageUrl;
+
+  var hasQuery = imageUrl.indexOf("?") !== -1;
+  var cacheParam = "v=" + PRODUCT_IMAGE_CACHE_VERSION;
+  if (imageUrl.indexOf(cacheParam) !== -1) return imageUrl;
+
+  return imageUrl + (hasQuery ? "&" : "?") + cacheParam;
+}
 
 function getToken() {
   return localStorage.getItem("token");
@@ -143,7 +155,11 @@ function logoutUser() {
  * Throws 404 if product does not exist.
  */
 async function fetchProductById(id) {
-  return await apiRequest("/products/" + id);
+  var product = await apiRequest("/products/" + id);
+  if (product && typeof product === "object") {
+    product.image = normalizeProductImageUrl(product.image);
+  }
+  return product;
 }
 
 /**
@@ -187,7 +203,14 @@ async function fetchProducts(opts) {
   if (opts.offers) params.push("offers=" + opts.offers);
   if (opts.sort) params.push("sort=" + opts.sort);
   var qs = params.length > 0 ? "?" + params.join("&") : "";
-  return await apiRequest("/products" + qs);
+  var data = await apiRequest("/products" + qs);
+  if (data && Array.isArray(data.products)) {
+    data.products = data.products.map(function (p) {
+      if (!p || typeof p !== "object") return p;
+      return { ...p, image: normalizeProductImageUrl(p.image) };
+    });
+  }
+  return data;
 }
 
 // ─── Cart ───
@@ -213,13 +236,16 @@ function normalizeCartItems(items) {
         name: item.product.name,
         price: item.product.price,
         oldPrice: item.product.oldPrice || 0,
-        image: item.product.image,
+        image: normalizeProductImageUrl(item.product.image),
         stock: item.product.stock,
         rating: item.product.rating || 0,
         quantity: item.quantity,
       };
     }
     // Already flat (localStorage format from non-logged-in adds)
+    if (item && typeof item === "object" && item.image) {
+      return { ...item, image: normalizeProductImageUrl(item.image) };
+    }
     return item;
   });
 }
