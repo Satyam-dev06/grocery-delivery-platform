@@ -1258,6 +1258,80 @@ document.addEventListener("click", function(e) {
   }
 });
 
-// Close user dropdown on outside click (also handled via _closeHandler)
+/* ─── Mobile Menu Toggle ─── */
+function toggleMobileMenu() {
+  var btn = document.getElementById('hamburgerBtn');
+  var menu = document.getElementById('mobileMenuPanel');
+  var overlay = document.getElementById('mobileMenuOverlay');
+  if (!menu) {
+    createMobileMenu();
+    menu = document.getElementById('mobileMenuPanel');
+    overlay = document.getElementById('mobileMenuOverlay');
+  }
+  var isOpen = menu.classList.toggle('open');
+  overlay.classList.toggle('show', isOpen);
+  btn.classList.toggle('active', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+function createMobileMenu() {
+  // Create overlay
+  var overlay = document.createElement('div');
+  overlay.className = 'mobile-menu-overlay';
+  overlay.id = 'mobileMenuOverlay';
+  overlay.onclick = toggleMobileMenu;
+  document.body.appendChild(overlay);
+
+  // Create panel
+  var panel = document.createElement('div');
+  panel.className = 'mobile-menu-panel';
+  panel.id = 'mobileMenuPanel';
+
+  // Get user info
+  var userName = 'Guest';
+  var userEmail = '';
+  var user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user && user.name) userName = user.name;
+  if (user && user.email) userEmail = user.email;
+
+  panel.innerHTML =
+    '<div class="mobile-menu-header">' +
+      '<div class="logo">\🛒 GroceryHub</div>' +
+      '<button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu"><i class="fas fa-times"></i></button>' +
+    '</div>' +
+    '<div class="mobile-menu-user" style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border-light);">' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);">' +
+        '<div style="width:44px;height:44px;border-radius:50%;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--primary);"><i class="fas fa-user"></i></div>' +
+        '<div><div style="font-weight:600;font-size:15px;color:var(--text);">' + escapeHtml(userName) + '</div>' +
+        '<div style="font-size:12px;color:var(--text-muted);">' + escapeHtml(userEmail || (isLoggedIn() ? 'Logged in' : 'Not logged in')) + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<ul class="mobile-menu-nav">' +
+      '<li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>' +
+      '<li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart <span class="mobile-cart-count" id="mobileCartCount" style="background:var(--primary);color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:auto;">0</span></a></li>' +
+      '<li><a href="wishlist.html"><i class="fas fa-heart"></i> Wishlist</a></li>' +
+      '<li><a href="orders.html"><i class="fas fa-truck"></i> Orders</a></li>' +
+      '<li><a href="profile.html"><i class="fas fa-user"></i> My Account</a></li>' +
+      '<li><a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a></li>' +
+      '<div class="mobile-menu-divider"></div>' +
+      '<li><a href="index.html#categories"><i class="fas fa-th-large"></i> Categories</a></li>' +
+      '<li><a href="index.html#offers"><i class="fas fa-tags"></i> Offers</a></li>' +
+      '<div class="mobile-menu-divider"></div>' +
+      (isLoggedIn()
+        ? '<li><a href="#" onclick="logoutUser();toggleMobileMenu();return false;" style="color:var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>'
+        : '<li><a href="login.html" style="color:var(--primary);"><i class="fas fa-sign-in-alt"></i> Login / Register</a></li>') +
+    '</ul>' +
+    '<div class="mobile-menu-footer">' +
+      '<p>&copy; 2026 GroceryHub</p>' +
+    '</div>';
+
+  document.body.appendChild(panel);
+
+  // Update cart count in mobile menu
+  var stored = JSON.parse(localStorage.getItem('cart') || '[]');
+  var mobileCount = document.getElementById('mobileCartCount');
+  if (mobileCount) mobileCount.textContent = stored.length;
+}
 
 // Close user dropdown on outside click (also handled via _closeHandler)
